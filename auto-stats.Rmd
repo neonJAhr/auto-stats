@@ -26,12 +26,14 @@ Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can j
 ### Introduction: What are you achieving with this test?
 
 Dear user,
-You selected to conduct a Student's t-test. This test checks whether the data follows a Student's t-Distribution under the null hypothesis. In simpler terms, this test checks whether your data follows a normal distribution if the scaling term were known.
-This test is often used to see whether the means of two sets of data are significantly different from one another.  
+You selected to conduct a Student's t-test. This test checks whether the data follows a Student's t-Distribution under the null hypothesis. It is often used to see whether the means of two sets of data are significantly different from one another.  
 
 First let’s take a look at the data as a raincloud plot: 
 
-<span style="color: red;">INSERT RAINCLOUD PLOT HERE</span>
+<span style="color: red;">INSERT RAINCLOUD PLOT HERE
+
+
+VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS</span>
 
 # Low Verbosity Level
 
@@ -207,7 +209,7 @@ NEW VERSION: When researchers want to test whether some property or parameter ha
 In many frequentist statistics, the way to determine significance is done via the p-value. While originally proposed by Fisher (1955) and not related to the idea of comparing hypotheses as proposed by Neyman and Pearson (1933)
 </span>
 
-Statistical significance is asserted via the p-value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. Significance is assumed if the p-value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level. Specifically, there is significant evidence to reject the null hypothesis.
+Statistical significance is asserted via the p-value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. In other words, were one to repeat this experiment and collect data each time, the chance of getting a test result that is as high or higher as the observed result would only occur in p-value*100 percent of the time. Significance is assumed if the p-value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level. 
 
 <span style="color: red;">Is the word parameter here correct? Or do I need to say test result?</span>
 
@@ -215,7 +217,58 @@ Statistical significance is asserted via the p-value. This value calculated by t
 
 There exist several criticisms to this method to determine the significance of an effect. 
 
-First, it never actually tests the statistical hypothesis. 
+- it never actually tests the statistical hypothesis. 
+- The threshold of 0.05 is arbitrary
+- due to its method, interpretations are often incorrect as they forget/falsely assert the meaning of the probability being dependent on the null hypothesis being true
+- requires blindness of the researchers on the data to avoid bias. 
+- 
+
+
+```{r MV_homoscedasity_test, include = FALSE}
+# Find Levene's test as code
+leveneTest(sleep$extra, group = sleep$group)
+levTest <- leveneTest(sleep$extra, group = sleep$group)
+if (levTest$`Pr(>F)`[1] < 0.05) {
+  levTestResult <- "The test showed significance, meeting that there is a difference in the variance of the two groups. That in turn means that the results of the t-test cannot be interpreted as valid. Instead of a Student's t-test, consider running a Welch's t-test which does not assume equal variance."
+} else {
+  levTestResult <- "The test did not show significance, meeting that the variances between the two groups is not significantly different. This means that you can safely conclude the results of the t-test."
+}
+```
+Before you can conduct a `r ttest$method`, we first need to check for assumptions that need to be held in order for the test to be valid. The assumptions for a `r ttest$method` are as follows:
+
+- The two sets of data have similar variance.
+- There are no significant outliers in the data that could influence the results.
+- Neither data set contains skewness in the distribution of results.
+
+To test homogeneity of variance, Levene's test was performed. `r levTestResult`
+
+```{r MV_test_outliers, include=FALSE}
+dixon <- dixon.test(data_paired[,1])
+grubbs <- grubbs.test(data_paired[,1])
+```
+
+```{r MV_outliers_output, include=FALSE}
+if (grubbs$p.value > 0.05 & dixon$p.value > 0.05) {
+  outliers <- "Both tests reported no significant effect of outliers, so you can safely report the results of the test."} else if (grubbs$p.value < 0.05 & dixon$p.value > 0.05) {
+  outliers <- cat("Unfortunately, Grubb's test for outliers found a significance of the greatest outlier, G = ", grubbs$statistic[1], "U =", grubbs$statistic[2], "p =", grubbs$p.value,". This means that you should exclude the outlier. Don't forget to mention this in the report!")
+  } else if (grubbs$p.value > 0.05 & dixon$p.value < 0.05) {
+  outliers <- cat("Unfortunately, Dixon's Q test for outliers found a significance of the greatest outlier, Q = ", dixon$statistic[1], "stating that the", dixon$alternative,"p =", dixon$p.value,". This means that you should consider excluding the outlier. Don't forget to mention this in the report!")
+  } else {
+  outliers <- cat("Unfortunately, both the Dixon's Q test and the Grubb's test for outliers found a significance of the greatest outlier, Q = ", dixon$statistic[1], "stating that the", dixon$alternative,"p =", dixon$p.value,". G = ", grubbs$statistic[1], "U =", grubbs$statistic[2], "p =", grubbs$p.value,". This means that you should consider excluding the outlier. Don't forget to mention this in the report!")
+}
+```
+It also assumes there to be no significant outliers that skew the results. To test this, both a Grubb's test and a Dixon's Q test were conducted. `r outliers`
+
+```{r skewness, include=FALSE}
+skew <- skewness(sleep$extra)
+if (abs(skew) > 1) {
+  skewOutput <- cat("The distribution of your data is highly skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA")
+} else if (abs(skew) > 0.5 & abs(skew) <= 1) {
+  skewOutput <- cat("The distribution of your data is moderately skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you run could a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA")
+} else {skewOutput <- "distribution of your data is only mildly skewed, which means that you can assume normality for your data sets."}
+```
+Last, a skewness test was conducted to see how non-symmetric your data set is. `r skewOutput`
+
 
 # Sources/References
 
