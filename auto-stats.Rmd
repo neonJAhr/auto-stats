@@ -108,6 +108,8 @@ if (ttest$p.value < 0.05)
   signif <- "Since your p-value was above 0.05, the test is not statistically significant."}
 ```
 
+<span style="color: red;">Which style do we use in JASP? APA style uses the term "p value", while the American Statistical Association uses "p-value".</span>
+
 #### Hypothesis Testing
 
 Your null-hypothesis assumed that the control condition's mean was not `r ttest$alternative` than the alternative condition.
@@ -192,15 +194,36 @@ power.t.test(n=10, delta = (2.33-0.75), sd = 0.849)
 
 # High Verbosity Level
 
-## What is Null-Hypothesis Significance Testing?
+## What is Null-Hypothesis Significance Testing (NHST)?
 
-When researchers want to test a hypothesis, they usually [Is 'usually' reasonable to say? alt: In the majority of cases?] test more than one hypothesis and see how well the data is explained by each one. In classical/frequentist statistical hypothesis testing, this is often done by having one hypothesis assume that the data, which is following some form of distribution, is influenced by a certain parameter, while the other assumes this parameter to have no effect, i.e. the data's variation is only influenced by its distribution. This "other" distribution is conventionally called the null hypothesis <span style="color: red;">(H_0)</span>
+OLD VERSION: When researchers want to test a hypothesis, they usually [Is 'usually' reasonable to say? alt: In the majority of cases?] test more than one hypothesis and see how well the data is explained by each one. In classical/frequentist statistical hypothesis testing, this is often done by having one hypothesis assume that the data, which is following some form of distribution, is influenced by a certain parameter, while the other assumes this parameter to have no effect, i.e. the data's variation is only influenced by its distribution. This "other" distribution is conventionally called the null hypothesis 
+<span style="color: red;">(H_0)</span>
+, while the hypothesis with the added parameter is referred to as the statistical/alternative hypothesis 
+<span style="color: red;">(H_1)</span>. 
 
+NEW VERSION: When researchers want to test whether some property or parameter has an effect on the distribution of observed data, they conduct a null hypothesis test. In this case, the null hypothesis assumes that the parameter influencing the distribution has no effect, i.e. is equal to zero. In contrast, the alternative/statistical hypothesis calculates the size of the effect on the distribution. 
+
+<span style="text-decoration: line-through;">
+In many frequentist statistics, the way to determine significance is done via the p-value. While originally proposed by Fisher (1955) and not related to the idea of comparing hypotheses as proposed by Neyman and Pearson (1933)
+</span>
+
+Statistical significance is asserted via the p-value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. Significance is assumed if the p-value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level. Specifically, there is significant evidence to reject the null hypothesis.
+
+<span style="color: red;">Is the word parameter here correct? Or do I need to say test result?</span>
 
 ## Limitations of NHST
 
+There exist several criticisms to this method to determine the significance of an effect. 
+
+First, it never actually tests the statistical hypothesis. 
+
 # Sources/References
 
+Fisher, R (1955). "Statistical Methods and Scientific Induction". Journal of the Royal Statistical Society, Series B. 17 (1): 69–78.
+
+Neyman, J; Pearson, E. S. (January 1, 1933). "On the Problem of the most Efficient Tests of Statistical Hypotheses". Philosophical Transactions of the Royal Society A. 231 (694–706): 289–337. 
+
+## Tests
 Whitney-Mann Non-Parametric Test
 
 
