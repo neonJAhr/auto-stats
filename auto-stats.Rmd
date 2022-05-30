@@ -13,14 +13,15 @@ library("car")
 library("e1071")
 ```
 
-SELECT DATASET HERE.
+<span style="color: red;">SELECT DATASET HERE.</span>
 ```{r data_input, include=FALSE}
 data <- read.csv("kitchenRollsTTest.csv")
 data_paired <- sleep
 ```
 
+<span style="color: red;">
 SELECT DV AND IV.
-Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value.
+Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value.</span>
 
 ### Introduction: What are you achieving with this test?
 
@@ -30,7 +31,7 @@ This test is often used to see whether the means of two sets of data are signifi
 
 First let’s take a look at the data as a raincloud plot: 
 
-INSERT RAINCLOUD PLOT HERE
+<span style="color: red;">INSERT RAINCLOUD PLOT HERE</span>
 
 # Low Verbosity Level
 
@@ -71,9 +72,13 @@ if (sw_test$p.value < 0.05) {
 
 
 ```{r example_test, include=FALSE}
-# Code chunk needs to be before any reference to the statistic itself.
+# This code chunk needs to be before any reference to the statistic itself.
+
+# Additionally, this ttest is there to ensure a ttest object exists (as mentioned in issue below). 
+ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
+
 if (outlier_test == TRUE & levTest$`Pr(>F)`[1] <= 0.05 & sw_test$p.value >= 0.05) {
-  # ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.tailed")
+  # ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
   ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, paired = TRUE, alternative = "less")
  
   ttest
@@ -83,7 +88,7 @@ if (outlier_test == TRUE & levTest$`Pr(>F)`[1] <= 0.05 & sw_test$p.value >= 0.05
 }
 ```
 
-ISSUE: This method of output requires there to be a object called ttest. 
+<span style="color: red;">ISSUE: This method of output requires there to be a object called ttest. </span>
 
 Specifically, you selected to do a `r ttest$method`, with the alternative condition's mean score being`r ttest$alternative` than the control condition's.
 
@@ -189,7 +194,7 @@ power.t.test(n=10, delta = (2.33-0.75), sd = 0.849)
 
 ## What is Null-Hypothesis Significance Testing?
 
-When researchers want to test a hypothesis, they usually [Is 'usually' reasonable to say? alt: In the majority of cases?] test more than one hypothesis and see how well the data is explained by each one. In classical/frequentist statistical hypothesis testing, this is often done by having one hypothesis assume that the data, which is following some form of distribution, is influenced by a certain parameter, while the other assumes this parameter to have no effect, i.e. the data's variation is only influenced by its distribution. This "other" distribution is conventionally called the null hypothesis (\H_0)
+When researchers want to test a hypothesis, they usually [Is 'usually' reasonable to say? alt: In the majority of cases?] test more than one hypothesis and see how well the data is explained by each one. In classical/frequentist statistical hypothesis testing, this is often done by having one hypothesis assume that the data, which is following some form of distribution, is influenced by a certain parameter, while the other assumes this parameter to have no effect, i.e. the data's variation is only influenced by its distribution. This "other" distribution is conventionally called the null hypothesis <span style="color: red;">(H_0)</span>
 
 
 ## Limitations of NHST
