@@ -13,7 +13,7 @@ library("car")
 library("e1071")
 ```
 
-<span style="color: red;">SELECT DATASET HERE.</span>
+<span style="color: red;">SELECT DATASET HERE. CURRENTLY USING TWO DATASETS FOR PAIRED AND UNPAIRED EXAMPLES</span>
 ```{r data_input, include=FALSE}
 data <- read.csv("kitchenRollsTTest.csv")
 data_paired <- sleep
