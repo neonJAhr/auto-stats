@@ -11,7 +11,7 @@
 
 <meta name="author" content="Arne John" />
 
-<meta name="date" content="2022-05-30" />
+<meta name="date" content="2022-05-31" />
 
 <title>Auto-Stats</title>
 
@@ -365,7 +365,7 @@ pre code {
 
 <h1 class="title toc-ignore">Auto-Stats</h1>
 <h4 class="author">Arne John</h4>
-<h4 class="date">2022-05-30</h4>
+<h4 class="date">2022-05-31</h4>
 
 </div>
 
@@ -379,12 +379,12 @@ the placeholder value.</span></p>
 <h3>Introduction: What are you achieving with this test?</h3>
 <p>Dear user, You selected to conduct a Student’s t-test. This test
 checks whether the data follows a Student’s t-Distribution under the
-null hypothesis. In simpler terms, this test checks whether your data
-follows a normal distribution if the scaling term were known. This test
-is often used to see whether the means of two sets of data are
-significantly different from one another.</p>
+null hypothesis. It is often used to see whether the means of two sets
+of data are significantly different from one another.</p>
 <p>First let’s take a look at the data as a raincloud plot:</p>
-<p><span style="color: red;">INSERT RAINCLOUD PLOT HERE</span></p>
+<p><span style="color: red;">INSERT RAINCLOUD PLOT HERE</p>
+<p>VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS &amp;
+OUTLIERS</span></p>
 </div>
 <div id="low-verbosity-level" class="section level1">
 <h1>Low Verbosity Level</h1>
@@ -403,6 +403,9 @@ condition’s.</p>
 <div id="parameter-estimation" class="section level4">
 <h4>Parameter Estimation</h4>
 <p>The estimated parameter is t(100) = -0.75 with p = 0.4529.</p>
+<p><span style="color: red;">Which style do we use in JASP? APA style
+uses the term “p value”, while the American Statistical Association uses
+“p-value”.</span></p>
 </div>
 <div id="hypothesis-testing" class="section level4">
 <h4>Hypothesis Testing</h4>
@@ -435,9 +438,8 @@ can safely report the results of the test.</p>
 <p>Last, a skewness test was conducted to see how non-symmetric your
 data set is. distribution of your data is only mildly skewed, which
 means that you can assume normality for your data sets.</p>
-<div id="actual-test-1" class="section level3">
-<h3>Actual Test</h3>
-</div>
+<div id="actual-test-1" class="section level2">
+<h2>Actual Test</h2>
 <div id="hypothesis-testing-1" class="section level3">
 <h3>Hypothesis Testing</h3>
 <p>The analysis shows that you have t(100) = -0.75 with p = 0.4529. This
@@ -459,28 +461,108 @@ a 95% confidence interval.</p>
 </div>
 </div>
 </div>
+</div>
 <div id="high-verbosity-level" class="section level1">
 <h1>High Verbosity Level</h1>
-<div id="what-is-null-hypothesis-significance-testing" class="section level2">
-<h2>What is Null-Hypothesis Significance Testing?</h2>
-<p>When researchers want to test a hypothesis, they usually [Is
-‘usually’ reasonable to say? alt: In the majority of cases?] test more
-than one hypothesis and see how well the data is explained by each one.
-In classical/frequentist statistical hypothesis testing, this is often
-done by having one hypothesis assume that the data, which is following
-some form of distribution, is influenced by a certain parameter, while
-the other assumes this parameter to have no effect, i.e. the data’s
-variation is only influenced by its distribution. This “other”
-distribution is conventionally called the null hypothesis <span style="color: red;">(H_0)</span> , while the hypothesis with the added
-parameter is referred to as the alternative hypothesis.</p>
+<div id="what-is-null-hypothesis-significance-testing-nhst" class="section level3">
+<h3>What is Null-Hypothesis Significance Testing (NHST)?</h3>
+<p>OLD VERSION: When researchers want to test a hypothesis, they usually
+[Is ‘usually’ reasonable to say? alt: In the majority of cases?] test
+more than one hypothesis and see how well the data is explained by each
+one. In classical/frequentist statistical hypothesis testing, this is
+often done by having one hypothesis assume that the data, which is
+following some form of distribution, is influenced by a certain
+parameter, while the other assumes this parameter to have no effect,
+i.e. the data’s variation is only influenced by its distribution. This
+“other” distribution is conventionally called the null hypothesis <span style="color: red;">(H_0)</span> , while the hypothesis with the added
+parameter is referred to as the statistical/alternative hypothesis <span style="color: red;">(H_1)</span>.</p>
+<p>NEW VERSION: When researchers want to test whether some property or
+parameter has an effect on the distribution of observed data, they
+conduct a null hypothesis test. In this case, the null hypothesis
+assumes that the parameter influencing the distribution has no effect,
+i.e. is equal to zero. In contrast, the alternative/statistical
+hypothesis calculates the size of the effect on the distribution.</p>
 <p><span style="text-decoration: line-through;"> In many frequentist
 statistics, the way to determine significance is done via the p-value.
 While originally proposed by Fisher (1955) and not related to the idea
 of comparing hypotheses as proposed by Neyman and Pearson (1933)
 </span></p>
+<p>Statistical significance is asserted via the p-value. This value
+calculated by the probability of obtaining a parameter that is at least
+as extreme as the observed parameter, assuming the null hypothesis to be
+correct/true. In other words, were one to repeat this experiment and
+collect data each time, the chance of getting a test result that is as
+high or higher as the observed result would only occur in p-value*100
+percent of the time. Significance is assumed if the p-value falls below
+some previously asserted threshold value, usually set to 0.05, also
+known as the alpha level.</p>
+<p><span style="color: red;">Is the word parameter here correct? Or do I
+need to say test result?</span></p>
 </div>
-<div id="limitations-of-nhst" class="section level2">
-<h2>Limitations of NHST</h2>
+<div id="limitations-of-nhst" class="section level3">
+<h3>Limitations of NHST</h3>
+<p>There exist several criticisms to this method to determine the
+significance of an effect.</p>
+<ul>
+<li>it never actually tests the statistical hypothesis.</li>
+<li>The threshold of 0.05 is arbitrary</li>
+<li>due to its method, interpretations are often incorrect as they
+forget/falsely assert the meaning of the probability being dependent on
+the null hypothesis being true</li>
+<li>requires blindness of the researchers on the data to avoid
+bias.</li>
+<li></li>
+</ul>
+</div>
+<div id="descriptions" class="section level3">
+<h3>Descriptions</h3>
+<p>Before you can conduct a Two Sample t-test, we first need to check
+for assumptions that need to be held in order for the test to be valid.
+The assumptions for a Two Sample t-test are as follows:</p>
+<ul>
+<li>The two sets of data have similar variance.</li>
+<li>There are no significant outliers in the data that could influence
+the results.</li>
+<li>Neither data set contains skewness in the distribution of
+results.</li>
+</ul>
+<p>To test homogeneity of variance, Levene’s test was performed. The
+test did not show significance, meeting that the variances between the
+two groups is not significantly different. This means that you can
+safely conclude the results of the t-test.</p>
+<p>It also assumes there to be no significant outliers that skew the
+results. To test this, both a Grubb’s test and a Dixon’s Q test were
+conducted. Both tests reported no significant effect of outliers, so you
+can safely report the results of the test.</p>
+<p>Last, a skewness test was conducted to see how non-symmetric your
+data set is. distribution of your data is only mildly skewed, which
+means that you can assume normality for your data sets.</p>
+</div>
+<div id="actual-test-2" class="section level3">
+<h3>Actual Test</h3>
+<p><span style="color: red;">Have the user choose whether the
+alternative is two sided, less, or greater, for purpose of demonstration
+it’s less. TABLE DOESN’T WORK YET</span></p>
+</div>
+<div id="hypothesis-testing-2" class="section level3">
+<h3>Hypothesis Testing</h3>
+<p>The analysis shows that you have t(100) = -0.75 with p = 0.4529. This
+means that assuming the null hypothesis to be true, when running this
+test an infinite amount of times the chances of getting a score of
+-0.7536053 or higher would only occur in 45.2856965% of cases. Since
+0.452857 is</p>
+<p>above the 0.05 threshold, the test is said to be not be significant
+and you cannot reject the null hypothesis.</p>
+<div id="parameter-estimation-2" class="section level4">
+<h4>Parameter Estimation</h4>
+<p>Now that you confirmed the assumptions to hold, you conducted a Two
+Sample t-test to test whether the mean in group clock is two.sided than
+the mean in group counter. To conclude this, you want to reject the
+null-hypothesis that assumes the true difference in means between group
+clock and group counter to be 0.</p>
+<p>Specifically, you test for a difference in mean_NEO by Rotation with
+a 95% confidence interval.</p>
+</div>
 </div>
 </div>
 <div id="sourcesreferences" class="section level1">
@@ -492,7 +574,13 @@ most Efficient Tests of Statistical Hypotheses”. Philosophical
 Transactions of the Royal Society A. 231 (694–706): 289–337.</p>
 <div id="tests" class="section level2">
 <h2>Tests</h2>
-<p>Whitney-Mann Non-Parametric Test</p>
+<p>Mann-Whitney Non-Parametric Test / Wilcoxon Rank Sum David F. Bauer
+(1972). Constructing confidence sets using rank statistics. Journal of
+the American Statistical Association 67, 687–690. doi:
+10.1080/01621459.1972.10481279.</p>
+<p>Myles Hollander and Douglas A. Wolfe (1973). Nonparametric
+Statistical Methods. New York: John Wiley &amp; Sons. Pages 27–33
+(one-sample), 68–75 (two-sample). Or second edition (1999).</p>
 <p>Shapiro-Wilk Normality Test Patrick Royston (1982). An extension of
 Shapiro and Wilk’s WW test for normality to large samples. Applied
 Statistics, 31, 115–124. <a href="doi:10.2307/2347973" class="uri">doi:10.2307/2347973</a>.</p>
