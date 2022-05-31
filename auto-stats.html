@@ -370,7 +370,8 @@ pre code {
 </div>
 
 
-<p><span style="color: red;">SELECT DATASET HERE.</span></p>
+<p><span style="color: red;">SELECT DATASET HERE. CURRENTLY USING TWO
+DATASETS FOR PAIRED AND UNPAIRED EXAMPLES</span></p>
 <p><span style="color: red;"> SELECT DV AND IV. Maybe force the IV to be
 [,1] and the DV to be [,2] so the following steps can just refer to
 those columns? Otherwise generalize it so that following tests call upon
@@ -514,8 +515,8 @@ bias.</li>
 <li></li>
 </ul>
 </div>
-<div id="descriptions" class="section level3">
-<h3>Descriptions</h3>
+<div id="descriptions-assumptions" class="section level3">
+<h3>Descriptions / Assumptions</h3>
 <p>Before you can conduct a Two Sample t-test, we first need to check
 for assumptions that need to be held in order for the test to be valid.
 The assumptions for a Two Sample t-test are as follows:</p>
@@ -526,20 +527,48 @@ the results.</li>
 <li>Neither data set contains skewness in the distribution of
 results.</li>
 </ul>
+<p><span style="color: red;">Should independence be discussed? Can we
+test for independence in a meaningful way, or is it just meant to be
+“thought-provoking?”</p>
+<p></span></p>
+<div id="equality-of-variance-homoscedasity" class="section level4">
+<h4>Equality of Variance / Homoscedasity</h4>
+<p><span style="color: red;">Paragraph explaining the necessity of
+equality of variance</span></p>
 <p>To test homogeneity of variance, Levene’s test was performed. The
 test did not show significance, meeting that the variances between the
 two groups is not significantly different. This means that you can
 safely conclude the results of the t-test.</p>
+</div>
+<div id="outliers" class="section level4">
+<h4>Outliers</h4>
+<p><span style="color: red;">Do we want a paragraph on outliers, given
+that the raincloud plot is above?</span></p>
 <p>It also assumes there to be no significant outliers that skew the
 results. To test this, both a Grubb’s test and a Dixon’s Q test were
 conducted. Both tests reported no significant effect of outliers, so you
 can safely report the results of the test.</p>
+</div>
+<div id="skewness" class="section level4">
+<h4>Skewness</h4>
 <p>Last, a skewness test was conducted to see how non-symmetric your
 data set is. distribution of your data is only mildly skewed, which
 means that you can assume normality for your data sets.</p>
+<p><span style="color: red;">Paragraph explaining the concept of
+skewness and its relevance for t tests.</span></p>
+</div>
+<div id="normality-test-shapiro-wilk" class="section level4">
+<h4>Normality test (Shapiro-Wilk)</h4>
+<p><span style="color: red;">Paragraph explaining the concept of
+normality testing.</p>
+<p>Needs updating for text.</span></p>
+</div>
 </div>
 <div id="actual-test-2" class="section level3">
 <h3>Actual Test</h3>
+<p><span style="color: red;">Datasets: Is it possible to have a dataset
+on which one can test all types of statistical tests? Can you reasonably
+run an independent and paired t test on the same dataset?</span></p>
 <p><span style="color: red;">Have the user choose whether the
 alternative is two sided, less, or greater, for purpose of demonstration
 it’s less. TABLE DOESN’T WORK YET</span></p>

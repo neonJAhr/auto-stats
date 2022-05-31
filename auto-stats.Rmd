@@ -13,17 +13,27 @@ library("car")
 library("e1071")
 ```
 
+# Introduction
+
 <span style="color: red;">SELECT DATASET HERE. CURRENTLY USING TWO DATASETS FOR PAIRED AND UNPAIRED EXAMPLES</span>
+Dataset is Moon and Aggression. 
+
 ```{r data_input, include=FALSE}
 data <- read.csv("kitchenRollsTTest.csv")
 data_paired <- sleep
 ```
+
+ONLY FOCUS ON THE PAIRED T-TEST.
 
 <span style="color: red;">
 SELECT DV AND IV.
 Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value.</span>
 
 ### Introduction: What are you achieving with this test?
+
+Data should follow a normal distribution, but the variance from repeating the experiment follows t distribution. 
+
+
 
 Dear user,
 You selected to conduct a Student's t-test. This test checks whether the data follows a Student's t-Distribution under the null hypothesis. It is often used to see whether the means of two sets of data are significantly different from one another.  
@@ -33,7 +43,9 @@ First let’s take a look at the data as a raincloud plot:
 <span style="color: red;">INSERT RAINCLOUD PLOT HERE
 
 
-VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS</span>
+VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS
+
+Check for Model Misspecifications. </span>
 
 # Low Verbosity Level
 
@@ -111,6 +123,7 @@ if (ttest$p.value < 0.05)
 ```
 
 <span style="color: red;">Which style do we use in JASP? APA style uses the term "p value", while the American Statistical Association uses "p-value".</span>
+Answer: APA style
 
 #### Hypothesis Testing
 
@@ -182,6 +195,7 @@ if (ttest$p.value < 0.05){
 
 
 #### Parameter Estimation
+
 Now that you confirmed the assumptions to hold, you conducted a `r ttest$method` to test whether the `r attributes(ttest$estimate[1])` is `r ttest$alternative` than the `r attributes(ttest$estimate[2])`. To conclude this, you want to reject the null-hypothesis that assumes the true `r attributes(ttest$null.value)` to be `r ttest$null.value`.
 
 Specifically, you test for a difference in `r ttest$data.name` with a `r as.numeric(attributes(ttest$conf.int)) * 100`% confidence interval.
@@ -198,10 +212,14 @@ power.t.test(n=10, delta = (2.33-0.75), sd = 0.849)
 
 ### What is Null-Hypothesis Significance Testing (NHST)?
 
+Why are we doing this? It's a comparison between means?
+But you could also just estimate parameters
+This procedure tests whether the group means are equal, but also the size of the difference assumption it's not zero. 
+
 OLD VERSION: When researchers want to test a hypothesis, they usually [Is 'usually' reasonable to say? alt: In the majority of cases?] test more than one hypothesis and see how well the data is explained by each one. In classical/frequentist statistical hypothesis testing, this is often done by having one hypothesis assume that the data, which is following some form of distribution, is influenced by a certain parameter, while the other assumes this parameter to have no effect, i.e. the data's variation is only influenced by its distribution. This "other" distribution is conventionally called the null hypothesis 
-<span style="color: red;">(H_0)</span>
+<span style="color: red;">$\(H_0)$</span>
 , while the hypothesis with the added parameter is referred to as the statistical/alternative hypothesis 
-<span style="color: red;">(H_1)</span>. 
+<span style="color: red;">$\(H_1)$</span>. 
 
 NEW VERSION: When researchers want to test whether some property or parameter has an effect on the distribution of observed data, they conduct a null hypothesis test. In this case, the null hypothesis assumes that the parameter influencing the distribution has no effect, i.e. is equal to zero. In contrast, the alternative/statistical hypothesis calculates the size of the effect on the distribution. 
 
@@ -213,15 +231,7 @@ Statistical significance is asserted via the p-value. This value calculated by t
 
 <span style="color: red;">Is the word parameter here correct? Or do I need to say test result?</span>
 
-### Limitations of NHST
 
-There exist several criticisms to this method to determine the significance of an effect. 
-
-- it never actually tests the statistical hypothesis. 
-- The threshold of 0.05 is arbitrary
-- due to its method, interpretations are often incorrect as they forget/falsely assert the meaning of the probability being dependent on the null hypothesis being true
-- requires blindness of the researchers on the data to avoid bias. 
-- 
 
 ### Descriptions / Assumptions
 ```{r HV_homoscedasity_test, include = FALSE}
@@ -275,6 +285,8 @@ It also assumes there to be no significant outliers that skew the results. To te
 
 #### Skewness 
 
+"Although paired t test are relatively robust to skewness, you could either do a transfomation (e.g. log-transform), or consider to compare the results to a rank-based test"
+
 ```{r HV_skewness, include=FALSE}
 skew <- skewness(sleep$extra)
 if (abs(skew) > 1) {
@@ -289,7 +301,7 @@ Last, a skewness test was conducted to see how non-symmetric your data set is. `
 
 #### Normality test (Shapiro-Wilk)
 
-```{r LV_normality_test, include=FALSE}
+```{r HV_normality_test, include=FALSE}
 sw_test <- shapiro.test(data_paired[,1])
 if (sw_test$p.value < 0.05) {
   sw_test_result <- "The Shapiro-Wilk test concluded significance, meaning that the dataset does not follow a normal distribution. Therefore you cannot conclude valid results from the t-test."
@@ -298,11 +310,15 @@ if (sw_test$p.value < 0.05) {
 }
 ```
 
-<span style="color: red;">Paragraph explaining the concept of normality testing.</span>
+<span style="color: red;">Paragraph explaining the concept of normality testing.
+
+Needs updating for text.</span>
 
 ### Actual Test
 
-<span style="color: red;">Datasets: Is it possible to have a dataset on which one can test all types of statistical tests? Can you reasonably run an independent and paired t test on the same dataset?</span>
+<span style="color: red;">Datasets: Is it possible to have a dataset on which one can test all types of statistical tests? Can you reasonably run an independent and paired t test on the same dataset?
+
+Don't compare paired vs independent t tests.</span>
 
 ```{r all_types_of_tests, include=FALSE}
 # Instead of the assumptions determining the best test, depict all tests and show which one is holding up the best when compared
@@ -344,11 +360,28 @@ if (ttest$p.value < 0.05){
 ```
 `r signif`
 
+##### Misconceptions on Hypothesis Testing; ONLY FOR HV
 
 #### Parameter Estimation
 Now that you confirmed the assumptions to hold, you conducted a `r ttest$method` to test whether the `r attributes(ttest$estimate[1])` is `r ttest$alternative` than the `r attributes(ttest$estimate[2])`. To conclude this, you want to reject the null-hypothesis that assumes the true `r attributes(ttest$null.value)` to be `r ttest$null.value`.
 
 Specifically, you test for a difference in `r ttest$data.name` with a `r as.numeric(attributes(ttest$conf.int)) * 100`% confidence interval.
+
+##### Misconceptiions about Parameter Estimation; ONLY FOR HV
+
+INSTEAD OF ITS OWN SECTION
+### Limitations of NHST
+
+There exist several criticisms to this method to determine the significance of an effect. 
+
+- it never actually tests the statistical hypothesis. 
+- The threshold of 0.05 is arbitrary
+- due to its method, interpretations are often incorrect as they forget/falsely assert the meaning of the probability being dependent on the null hypothesis being true
+- requires blindness of the researchers on the data to avoid bias. 
+- 
+
+RESCHEDULE NEXT WEEK TO THURSDAY
+If publicly available, then 
 
 # Sources/References
 
@@ -357,6 +390,8 @@ Fisher, R (1955). "Statistical Methods and Scientific Induction". Journal of the
 Neyman, J; Pearson, E. S. (January 1, 1933). "On the Problem of the most Efficient Tests of Statistical Hypotheses". Philosophical Transactions of the Royal Society A. 231 (694–706): 289–337. 
 
 ## Tests
+
+<span style="color: red;">Raincloud Plots Paper</span>
 
 Mann-Whitney Non-Parametric Test / Wilcoxon Rank Sum
 David F. Bauer (1972). Constructing confidence sets using rank statistics. Journal of the American Statistical Association 67, 687–690. doi: 10.1080/01621459.1972.10481279.
