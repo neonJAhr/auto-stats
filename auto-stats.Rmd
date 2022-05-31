@@ -223,7 +223,7 @@ There exist several criticisms to this method to determine the significance of a
 - requires blindness of the researchers on the data to avoid bias. 
 - 
 
-### Descriptions
+### Descriptions / Assumptions
 ```{r HV_homoscedasity_test, include = FALSE}
 # Find Levene's test as code
 leveneTest(sleep$extra, group = sleep$group)
@@ -239,6 +239,14 @@ Before you can conduct a `r ttest$method`, we first need to check for assumption
 - The two sets of data have similar variance.
 - There are no significant outliers in the data that could influence the results.
 - Neither data set contains skewness in the distribution of results.
+
+<span style="color: red;">Should independence be discussed? Can we test for independence in a meaningful way, or is it just meant to be "thought-provoking?"
+
+</span>
+
+#### Equality of Variance / Homoscedasity
+
+<span style="color: red;">Paragraph explaining the necessity of equality of variance</span>
 
 To test homogeneity of variance, Levene's test was performed. `r levTestResult`
 
@@ -257,7 +265,15 @@ if (grubbs$p.value > 0.05 & dixon$p.value > 0.05) {
   outliers <- cat("Unfortunately, both the Dixon's Q test and the Grubb's test for outliers found a significance of the greatest outlier, Q = ", dixon$statistic[1], "stating that the", dixon$alternative,"p =", dixon$p.value,". G = ", grubbs$statistic[1], "U =", grubbs$statistic[2], "p =", grubbs$p.value,". This means that you should consider excluding the outlier. Don't forget to mention this in the report!")
 }
 ```
+
+
+#### Outliers
+
+<span style="color: red;">Do we want a paragraph on outliers, given that the raincloud plot is above?</span>
+
 It also assumes there to be no significant outliers that skew the results. To test this, both a Grubb's test and a Dixon's Q test were conducted. `r outliers`
+
+#### Skewness 
 
 ```{r HV_skewness, include=FALSE}
 skew <- skewness(sleep$extra)
@@ -269,7 +285,24 @@ if (abs(skew) > 1) {
 ```
 Last, a skewness test was conducted to see how non-symmetric your data set is. `r skewOutput`
 
+<span style="color: red;">Paragraph explaining the concept of skewness and its relevance for t tests.</span>
+
+#### Normality test (Shapiro-Wilk)
+
+```{r LV_normality_test, include=FALSE}
+sw_test <- shapiro.test(data_paired[,1])
+if (sw_test$p.value < 0.05) {
+  sw_test_result <- "The Shapiro-Wilk test concluded significance, meaning that the dataset does not follow a normal distribution. Therefore you cannot conclude valid results from the t-test."
+} else {
+  sw_test_result <- "The Shapiro-Wilk test showed that the data does not differ significantly from normal distribution."
+}
+```
+
+<span style="color: red;">Paragraph explaining the concept of normality testing.</span>
+
 ### Actual Test
+
+<span style="color: red;">Datasets: Is it possible to have a dataset on which one can test all types of statistical tests? Can you reasonably run an independent and paired t test on the same dataset?</span>
 
 ```{r all_types_of_tests, include=FALSE}
 # Instead of the assumptions determining the best test, depict all tests and show which one is holding up the best when compared
