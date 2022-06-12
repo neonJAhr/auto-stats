@@ -13,12 +13,15 @@ library("car")
 library("e1071")
 ```
 
-<span style="color: red;">SELECT DATASET HERE. CURRENTLY USING TWO DATASETS FOR PAIRED AND UNPAIRED EXAMPLES</span>
+SELECT DATASET HERE. 
+Is dataset paired? Y/N [Y]
+<span style="color: red;">CURRENTLY USING TWO DATASETS FOR PAIRED AND UNPAIRED EXAMPLES</span>
 Dataset is Moon and Aggression.
 
 ```{r data_input, include=FALSE}
 data <- read.csv("kitchenRollsTTest.csv")
 data_paired <- sleep
+is_paired <- TRUE
 ```
 
 ONLY FOCUS ON THE PAIRED T-TEST.
@@ -252,26 +255,34 @@ Don't compare paired vs independent t tests.</span>
 
 ```{r all_types_of_tests, include=FALSE}
 # Instead of the assumptions determining the best test, depict all tests and show which one is holding up the best when compared
+if (is_paired == TRUE) {
 
-ind_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
-ind_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "less")
-ind_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "greater")
+  paired_twoside_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "two.sided", paired = TRUE)
+  paired_less_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "less", paired = TRUE)
+  paired_more_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "greater", paired = TRUE)
 
-paired_twoside_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "two.sided", paired = TRUE)
-paired_less_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "less", paired = TRUE)
-paired_more_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "greater", paired = TRUE)
+  welch_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "two.sided")
+  welch_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "less")
+  welch_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "greater")
 
-welch_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "two.sided")
-welch_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "less")
-welch_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "greater")
+  paired_twoside_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "two.sided", paired = TRUE)
+  paired_less_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "less", paired = TRUE)
+  paired_more_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "greater", paired = TRUE)
+} else {
+  
+  ind_twoside_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "two.sided")
+  ind_less_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "less")
+  ind_more_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "greater")
+    
+  ind_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
+  ind_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "less")
+  ind_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "greater")
+  
+  welch_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "two.sided")
+  welch_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "less")
+  welch_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "greater")
+}
 
-ind_twoside_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "two.sided")
-ind_less_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "less")
-ind_more_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "greater")
-
-paired_twoside_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "two.sided", paired = TRUE)
-paired_less_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "less", paired = TRUE)
-paired_more_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "greater", paired = TRUE)
 ```
 
 <span style="color: red;">Have the user choose whether the alternative is two sided, less, or greater, for purpose of demonstration it's less. TABLE DOESN'T WORK YET</span>
@@ -292,7 +303,10 @@ if (ttest$p.value < 0.05){
 
 ##### Misconceptions on Hypothesis Testing; ONLY FOR HV
 
+
+
 #### Parameter Estimation
+
 Now that you confirmed the assumptions to hold, you conducted a `r ttest$method` to test whether the `r attributes(ttest$estimate[1])` is `r ttest$alternative` than the `r attributes(ttest$estimate[2])`. To conclude this, you want to reject the null-hypothesis that assumes the true `r attributes(ttest$null.value)` to be `r ttest$null.value`.
 
 Specifically, you test for a difference in `r ttest$data.name` with a `r as.numeric(attributes(ttest$conf.int)) * 100`% confidence interval.
@@ -311,8 +325,6 @@ There exist several criticisms to this method to determine the significance of a
 - requires blindness of the researchers on the data to avoid bias. 
 - 
 
-RESCHEDULE NEXT WEEK TO THURSDAY
-If publicly available, then 
 
 # Sources/References
 
