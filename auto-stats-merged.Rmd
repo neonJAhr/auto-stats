@@ -24,6 +24,7 @@ library("outliers")
 library("car")
 library("e1071")
 library("tidyverse")
+library("jaspTools")
 ```
 
 SELECT DATASET HERE. 
@@ -297,34 +298,16 @@ Don't compare paired vs independent t tests.</span>
 # Instead of the assumptions determining the best test, depict all tests and show which one is holding up the best when compared
 # To reduce if-statements, all tests check on the variable alternative and is_paired as declared by the arguments code chunk.
 if (is_paired == TRUE) {
-paired_ttest <- t.test(data = data_paired, Outbursts~Condition, var.equal = TRUE, alternative = alternative, paired = is_paired)
-welch_ttest <- t.test(data = data_paired, Outbursts~Condition, var.equal = FALSE, alternative = alternative)
-paired_wilcox <- wilcox.test(data = data_paired, Outbursts~Condition, alternative = alternative, paired = is_paired)
-#  paired_twoside_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "two.sided", paired = TRUE)
-#  paired_less_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "less", paired = TRUE)
-#  paired_more_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "greater", paired = TRUE)
+  paired_ttest <- t.test(data = data_paired, Outbursts~Condition, var.equal = TRUE, alternative = alternative, paired = is_paired)
+  welch_ttest <- t.test(data = data_paired, Outbursts~Condition, var.equal = FALSE, alternative = alternative)
+  paired_wilcox <- wilcox.test(data = data_paired, Outbursts~Condition, alternative = alternative, paired = is_paired)
 
-#  welch_twoside_ttest <- t.test(data = data_paired, extra~group, var.equal = FALSE, alternative = "two.sided")
-#  welch_less_ttest <- t.test(data = data_paired, extra~group, var.equal = FALSE, alternative = "less")
-#  welch_more_ttest <- t.test(data = data_paired, extra~group, var.equal = FALSE, alternative = "greater")
 
-#  paired_twoside_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "two.sided", paired = TRUE)
-#  paired_less_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "less", paired = TRUE)
-#  paired_more_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "greater", paired = TRUE)
-anova(paired_ttest, welch_ttest, paired_wilcox)  
 } else {
   
-#  ind_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
-#  ind_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "less")
-#  ind_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "greater")
-  
-#  welch_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "two.sided")
-#  welch_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "less")
-#  welch_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "greater")
-  
-#  ind_twoside_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "two.sided")
-#  ind_less_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "less")
-#  ind_more_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "greater")
+  ind_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = alternative)
+  welch_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = alternative)
+  ind_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = alternative)
 }
 
 ```
