@@ -6,6 +6,7 @@ output: html_document
 ---
 
 # How to Read This Document
+
 Currently, this is a static html page for output. This document is a report that becomes the output when a person is doing an analysis on data. 
 
 Different types of text: 
@@ -286,9 +287,9 @@ Don't compare paired vs independent t tests.</span>
 # Instead of the assumptions determining the best test, depict all tests and show which one is holding up the best when compared
 # To reduce if-statements, all tests check on the variable alternative and is_paired as declared by the arguments code chunk.
 if (is_paired == TRUE) {
-paired_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = alternative, paired = is_paired)
+paired_ttest <- t.test(data = data_paired, Moon~Other, var.equal = TRUE, alternative = alternative, paired = is_paired)
 welch_ttest <- t.test(data = data_paired, extra~group, var.equal = FALSE, alternative = alternative)
-
+paired_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = alternative, paired = is_paired)
 #  paired_twoside_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "two.sided", paired = TRUE)
 #  paired_less_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "less", paired = TRUE)
 #  paired_more_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "greater", paired = TRUE)
