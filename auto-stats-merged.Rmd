@@ -46,7 +46,7 @@ is_paired <- TRUE # TRUE or FALSE
 alternative <- "greater" # c("two.sided", "less", "greater")
 
 # From the arguments, the appropriate data file is loaded.
-if (is_paired == TRUE) {data_paired <- read.csv("Moon and Aggression.csv")} else {data <- read.csv("kitchenRollsTTest.csv")}
+if (is_paired == TRUE) data_paired <- read.csv("Moon and Aggression.csv") else data <- read.csv("kitchenRollsTTest.csv")
 ```
 
 ```{r tidying_moon_data}
@@ -246,7 +246,7 @@ It also assumes there to be no significant outliers that skew the results. To te
 
 #### Skewness
 
-"Although paired t test are relatively robust to skewness, you could either do a transfomation (e.g. log-transform), or consider to compare the results to a rank-based test"
+"Although paired t test are relatively robust to skewness, you could either do a transformation (e.g. log-transform), or consider to compare the results to a rank-based test"
 
 ```{r HV_skewness, include=FALSE}
 skew <- skewness(data_paired$extra)
@@ -315,8 +315,8 @@ if (is_paired == TRUE) {
 <span style="color: red;">Have the user choose whether the alternative is two sided, less, or greater, for purpose of demonstration it's less. TABLE DOESN'T WORK YET</span>
 ```{r comparison_table, echo=FALSE}
 # anova(ind_less_ttest,paired_less_ttest,welch_less_ttest,ind_less_wilcox,paired_less_wilcox)
-
-
+comparisonTable <- createJaspTable("Comparison")
+jaspTableR
 ```
 
 ### Hypothesis Testing
