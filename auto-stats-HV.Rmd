@@ -71,10 +71,23 @@ Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can j
 
 Though this wouldn't work as for paired data, specific columns would be selected to compare between.</span>
 
+# High Verbosity (HV)
+
 ### Introduction: What are you achieving with this test?
 
 Dear user,
 You selected to conduct a Student's t-test. This test checks whether the data follows a Student's t-Distribution under the null hypothesis. It is often used to see whether the means of two sets of data are significantly different from one another.  
+
+### What is Null-Hypothesis Significance Testing (NHST)?
+
+Why are we doing this? It's a comparison between means?
+But you could also just estimate parameters
+
+This procedure tests whether the group means are equal, but also the size of the difference assumption it's not zero.
+
+When researchers want to test whether some property or parameter has an effect on the distribution of observed data, they conduct a null hypothesis test. In this case, the null hypothesis assumes that the parameter influencing the distribution has no effect, i.e. is equal to zero. In contrast, the alternative/statistical hypothesis calculates the size of the effect on the distribution.
+
+Statistical significance is asserted via the p-value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. In other words, were one to repeat this experiment and collect data each time, the chance of getting a test result that is as high or higher as the observed result would only occur in p-value*100 percent of the time. Significance is assumed if the p-value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level.
 
 ### Descriptives
 
@@ -88,34 +101,6 @@ VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS
 Check for Model Misspecifications. </span>
 
 ### Assumption Checks
-
-In order to check the assumptions of the paired t-test, the following tests can be conducted:
-bla
-(2) bla 
-
-# Low Verbosity Level
-# High Verbosity Level
-
-### What is Null-Hypothesis Significance Testing (NHST)?
-
-Why are we doing this? It's a comparison between means?
-But you could also just estimate parameters
-This procedure tests whether the group means are equal, but also the size of the difference assumption it's not zero.
-
-OLD VERSION: When researchers want to test a hypothesis, they usually [Is 'usually' reasonable to say? alt: In the majority of cases?] test more than one hypothesis and see how well the data is explained by each one. In classical/frequentist statistical hypothesis testing, this is often done by having one hypothesis assume that the data, which is following some form of distribution, is influenced by a certain parameter, while the other assumes this parameter to have no effect, i.e. the data's variation is only influenced by its distribution. This "other" distribution is conventionally called the null hypothesis
-<span style="color: red;">$\(H_0)$</span>
-, while the hypothesis with the added parameter is referred to as the statistical/alternative hypothesis
-<span style="color: red;">$\(H_1)$</span>. 
-
-NEW VERSION: When researchers want to test whether some property or parameter has an effect on the distribution of observed data, they conduct a null hypothesis test. In this case, the null hypothesis assumes that the parameter influencing the distribution has no effect, i.e. is equal to zero. In contrast, the alternative/statistical hypothesis calculates the size of the effect on the distribution.
-
-<span style="text-decoration: line-through;">
-In many frequentist statistics, the way to determine significance is done via the p-value. While originally proposed by Fisher (1955) and not related to the idea of comparing hypotheses as proposed by Neyman and Pearson (1933)
-</span>
-
-Statistical significance is asserted via the p-value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. In other words, were one to repeat this experiment and collect data each time, the chance of getting a test result that is as high or higher as the observed result would only occur in p-value*100 percent of the time. Significance is assumed if the p-value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level.
-
-### Descriptions / Assumptions
 
 Before you can conduct a `r ttest$method`, we first need to check for assumptions that need to be held in order for the test to be valid. The assumptions for a `r ttest$method` are as follows:
 
