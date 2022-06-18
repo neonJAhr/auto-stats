@@ -2,9 +2,21 @@
 title: "Auto-Stats"
 author: "Arne John"
 date: "`r Sys.Date()`"
-output: html_document
+output: pdf_document
 # bibliography: ["references.bib"]
 ---
+
+# How to Read This Document
+
+Currently, this is a static html page for output. This document is a report that becomes the output when a person is doing an analysis on data. 
+
+Different types of text: 
+
+Regular text is the output found in the report, meant to be easily readable/understandable for the user.
+
+SUPERSCRIPT DENOTES REQUIRED INPUTS or extra output not created. Addtionally, [Choices] are denoted in brackets for now.
+
+\textcolor{blue}{Red font is meant to show missing areas as reminders for me to improve on.}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,30 +29,6 @@ library("papaja")
 library("citr")
 
 ```
-
-```{r colorfunction, include=FALSE}
-colorize <- function(x, color) {
-  if (knitr::is_latex_output()) {
-    sprintf("\\textcolor{%s}{%s}", color, x)
-  } else if (knitr::is_html_output()) {
-    sprintf("<span style='color: %s;'>%s</span>", color,
-      x)
-  } else x
-}
-```
-
-# How to Read This Document
-
-Currently, this is a static html page for output. This document is a report that becomes the output when a person is doing an analysis on data. 
-
-Different types of text: 
-
-Regular text is the output found in the report, meant to be easily readable/understandable for the user.
-
-SUPERSCRIPT DENOTES REQUIRED INPUTS or extra output not created. Addtionally, [Choices] are denoted in brackets for now.
-
-`r colorize("Red font is meant to show missing areas as reminders for me to improve on.", "red")`
-
 
 SELECT DATASET HERE. 
 The independent Dataset is Kitchen Rolls; The paired Dataset is Moon and Aggression.
@@ -86,7 +74,10 @@ SELECT DV AND IV.
 ttest <- t.test(data = data_paired, Outbursts~Condition, var.equal = TRUE, alternative = alternative, paired = is_paired)
 ```
 
-`r colorize('Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value. Though this wouldn not work as for paired data, specific columns would be selected to compare between.', "red")`
+<span style="color: red;">
+Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value.
+
+Though this wouldn't work as for paired data, specific columns would be selected to compare between.</span>
 
 # High Verbosity (HV)
 
@@ -110,11 +101,12 @@ Statistical significance is asserted via the p-value. This value calculated by t
 
 The data can be visualized with the help of a raincloud plot (Allen et al., 2019). This allows an immediate intuitive assessment of whether the groups differ, and whether the data in each group are approximately normally distributed.
 
-`r colorize("INSERT RAINCLOUD PLOT HERE", "red")`
+<span style="color: red;">INSERT RAINCLOUD PLOT HERE
 
-`r colorize("VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS", "red")`
 
-Check for Model Misspecifications.
+VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS
+
+Check for Model Misspecifications. </span>
 
 ### Assumption Checks
 
@@ -124,11 +116,13 @@ Before you can conduct a `r ttest$method`, we first need to check for assumption
 - There are no significant outliers in the data that could influence the results.
 - Neither data set contains skewness in the distribution of results.
 
-`r colorize('Should independence be discussed? Can we test for independence in a meaningful way, or is it just meant to be thought-provoking?', "red")`
+<span style="color: red;">Should independence be discussed? Can we test for independence in a meaningful way, or is it just meant to be "thought-provoking?"
+
+</span>
 
 #### Equality of Variance / Homoscedasity
 
-`r colorize("Paragraph explaining the necessity of equality of variance", "red")`
+<span style="color: red;">Paragraph explaining the necessity of equality of variance</span>
 
 ```{r HV_homoscedasity_test, include = FALSE}
 # Find Levene's test as code
@@ -163,7 +157,7 @@ if (grubbs$p.value > 0.05 & dixon$p.value > 0.05) {
 
 #### Outliers
 
-`r colorize("Do we want a paragraph on outliers, given that the raincloud plot is above?", "red")`
+<span style="color: red;">Do we want a paragraph on outliers, given that the raincloud plot is above?</span>
 
 It also assumes there to be no significant outliers that skew the results. To test this, both a Grubb's test and a Dixon's Q test were conducted. `r outliers`
 
@@ -182,7 +176,7 @@ if (abs(skew) >= 1) {
 
 Last, a skewness test was conducted to see how non-symmetric your data set is. `r skewOutput`
 
-`r colorize("Paragraph explaining the concept of skewness and its relevance for t tests.", "red")`
+<span style="color: red;">Paragraph explaining the concept of skewness and its relevance for t tests.</span>
 
 #### Normality test (Shapiro-Wilk)
 
@@ -195,11 +189,15 @@ if (sw_test$p.value < 0.05) {
 }
 ```
 
-`r colorize("Paragraph explaining the concept of normality testing. Needs updating for text.", "red")`
+<span style="color: red;">Paragraph explaining the concept of normality testing.
+
+Needs updating for text.</span>
 
 ### Actual Test
 
-`r colorize("Datasets: Is it possible to have a dataset on which one can test all types of statistical tests? Can you reasonably run an independent and paired t test on the same dataset?", "red")`
+<span style="color: red;">Datasets: Is it possible to have a dataset on which one can test all types of statistical tests? Can you reasonably run an independent and paired t test on the same dataset?
+
+Don't compare paired vs independent t tests.</span>
 
 ```{r all_types_of_tests, include=FALSE}
 # Instead of the assumptions determining the best test, depict all tests and show which one is holding up the best when compared
@@ -225,7 +223,7 @@ if (is_paired) {
 }
 ```
 
-`r colorize("Have the user choose whether the alternative is two sided, less, or greater, for purpose of demonstration it's less. TABLE DOESN'T WORK YET", "red")`
+<span style="color: red;">Have the user choose whether the alternative is two sided, less, or greater, for purpose of demonstration it's less. TABLE DOESN'T WORK YET</span>
 
 ```{r comparison_table, echo=FALSE}
 if (is_paired) {
@@ -235,14 +233,10 @@ if (is_paired) {
   apa_table(apa_wilcox$table, caption = "Paired Wilcoxon signed ranks test of the moon on outbursts")
 } else {
 # Tables
-  apa_t_table <- apa_table(apa_t$table, caption = "Independent t-test of the moon on outbursts")
+  apa_table(apa_t$table, caption = "Independent t-test of the moon on outbursts")
   apa_table(apa_welch$table, caption = "Welch's t-test of the moon on outbursts")
   apa_table(apa_wilcox$table, caption = "Wilcoxon signed ranks test of the moon on outbursts")
 }
-```
-
-```{r test_of_big_table}
-apa_table(cbind(apa_t$table, apa_welch$table, apa_wilcox$table))
 ```
 
 ### Hypothesis Testing
@@ -256,7 +250,7 @@ if (ttest$p.value < 0.05){
 ```
 `r signif`
 
-`r colorize('Cannot just round, needs instead some evaluation like "if p < 0.001, print that"', "red")`
+<span style="color: red;">Cannot just round, needs instead some evaluation like "if p < 0.001, print that"</span>
 
 ##### Misconceptions on Hypothesis Testing; ONLY FOR HV
 

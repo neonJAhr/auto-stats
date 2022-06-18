@@ -1,0 +1,525 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Auto-Stats},
+  pdfauthor={Arne John},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Auto-Stats}
+\author{Arne John}
+\date{2022-06-18}
+
+\begin{document}
+\maketitle
+
+\hypertarget{how-to-read-this-document}{%
+\section{How to Read This Document}\label{how-to-read-this-document}}
+
+Currently, this is a static html page for output. This document is a
+report that becomes the output when a person is doing an analysis on
+data.
+
+Different types of text:
+
+Regular text is the output found in the report, meant to be easily
+readable/understandable for the user.
+
+SUPERSCRIPT DENOTES REQUIRED INPUTS or extra output not created.
+Addtionally, {[}Choices{]} are denoted in brackets for now.
+
+{Red font is meant to show missing areas as reminders for me to improve
+on.}
+
+SELECT DATASET HERE. The independent Dataset is Kitchen Rolls; The
+paired Dataset is Moon and Aggression.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# This chunk is currently not being evaluated, as the data is being loaded in by the succeeding chunk. }
+\CommentTok{\# Ultimately, the user should first upload a data file and then tell the program whether the data has paired samples or not. }
+\CommentTok{\# The file is currently calling on two different datasets, depending on whether the user is analyzing paired or unpaired data.}
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"kitchenRollsTTest.csv"}\NormalTok{)}
+\NormalTok{data\_paired }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"Moon and Aggression.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Is dataset paired? Y/N {[}Y{]}
+
+Does your alternative hypothesis assume that the mean is different,
+greater, or lesser than the mean of the control group? {[}greater{]}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Since the moon dataset uses two columns and so combines observations, we need to tidy the data so each row is its own observation rather than participant. }
+\NormalTok{data\_paired[}\StringTok{"Participants"}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{15}\NormalTok{)}
+\NormalTok{data\_paired }\OtherTok{\textless{}{-}} \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{data =}\NormalTok{ data\_paired,}
+                            \AttributeTok{cols =}\NormalTok{ Moon}\SpecialCharTok{:}\NormalTok{Other,}
+                            \AttributeTok{names\_to =} \StringTok{"Condition"}\NormalTok{,}
+                            \AttributeTok{values\_to =} \StringTok{"Outbursts"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+SELECT DV AND IV. {[}In this case, IV need to be pairs: Moon \& Other{]}
+{[}DV are all the cells responding to the columns, rows are
+participants{]}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# This code chunk represents the user\textquotesingle{}s choices, but since that will likely be done through JASP, it contains no actual code. }
+\end{Highlighting}
+\end{Shaded}
+
+Maybe force the IV to be {[},1{]} and the DV to be {[},2{]} so the
+following steps can just refer to those columns? Otherwise generalize it
+so that following tests call upon the placeholder value.
+
+Though this wouldn't work as for paired data, specific columns would be
+selected to compare between.
+
+\hypertarget{high-verbosity-hv}{%
+\section{High Verbosity (HV)}\label{high-verbosity-hv}}
+
+\hypertarget{introduction-what-are-you-achieving-with-this-test}{%
+\subsubsection{Introduction: What are you achieving with this
+test?}\label{introduction-what-are-you-achieving-with-this-test}}
+
+Dear user, You selected to conduct a Student's t-test. This test checks
+whether the data follows a Student's t-Distribution under the null
+hypothesis. It is often used to see whether the means of two sets of
+data are significantly different from one another.
+
+\hypertarget{what-is-null-hypothesis-significance-testing-nhst}{%
+\subsubsection{What is Null-Hypothesis Significance Testing
+(NHST)?}\label{what-is-null-hypothesis-significance-testing-nhst}}
+
+Why are we doing this? It's a comparison between means? But you could
+also just estimate parameters
+
+This procedure tests whether the group means are equal, but also the
+size of the difference assumption it's not zero.
+
+When researchers want to test whether some property or parameter has an
+effect on the distribution of observed data, they conduct a null
+hypothesis test. In this case, the null hypothesis assumes that the
+parameter influencing the distribution has no effect, i.e.~is equal to
+zero. In contrast, the alternative/statistical hypothesis calculates the
+size of the effect on the distribution.
+
+Statistical significance is asserted via the p-value. This value
+calculated by the probability of obtaining a parameter that is at least
+as extreme as the observed parameter, assuming the null hypothesis to be
+correct/true. In other words, were one to repeat this experiment and
+collect data each time, the chance of getting a test result that is as
+high or higher as the observed result would only occur in p-value*100
+percent of the time. Significance is assumed if the p-value falls below
+some previously asserted threshold value, usually set to 0.05, also
+known as the alpha level.
+
+\hypertarget{descriptives}{%
+\subsubsection{Descriptives}\label{descriptives}}
+
+The data can be visualized with the help of a raincloud plot (Allen et
+al., 2019). This allows an immediate intuitive assessment of whether the
+groups differ, and whether the data in each group are approximately
+normally distributed.
+
+INSERT RAINCLOUD PLOT HERE
+
+VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS \& OUTLIERS
+
+Check for Model Misspecifications.
+
+\hypertarget{assumption-checks}{%
+\subsubsection{Assumption Checks}\label{assumption-checks}}
+
+Before you can conduct a Paired t-test, we first need to check for
+assumptions that need to be held in order for the test to be valid. The
+assumptions for a Paired t-test are as follows:
+
+\begin{itemize}
+\tightlist
+\item
+  The two sets of data have similar variance.
+\item
+  There are no significant outliers in the data that could influence the
+  results.
+\item
+  Neither data set contains skewness in the distribution of results.
+\end{itemize}
+
+Should independence be discussed? Can we test for independence in a
+meaningful way, or is it just meant to be ``thought-provoking?''
+
+\hypertarget{equality-of-variance-homoscedasity}{%
+\paragraph{Equality of Variance /
+Homoscedasity}\label{equality-of-variance-homoscedasity}}
+
+{Paragraph explaining the necessity of equality of variance}
+
+To test homogeneity of variance, Levene's test was performed. The test
+did not show significance, meeting that the variances between the two
+groups is not significantly different. This means that you can safely
+conclude the results of the t-test.
+
+\hypertarget{outliers}{%
+\paragraph{Outliers}\label{outliers}}
+
+{Do we want a paragraph on outliers, given that the raincloud plot is
+above?}
+
+It also assumes there to be no significant outliers that skew the
+results. To test this, both a Grubb's test and a Dixon's Q test were
+conducted. Both tests reported no significant effect of outliers, so you
+can safely report the results of the test.
+
+\hypertarget{skewness}{%
+\paragraph{Skewness}\label{skewness}}
+
+``Although paired t test are relatively robust to skewness, you could
+either do a transformation (e.g.~log-transform), or consider to compare
+the results to a rank-based test''
+
+Last, a skewness test was conducted to see how non-symmetric your data
+set is. The distribution of your data is moderately skewed, which means
+you cannot assume a normality in your distribution. This is not
+necessarily a problem, as long as your data set should be sufficiently
+large (n per group \textless{} 20) to have a valid t-test result.
+Alternatively, you run could a different test, such as INSERT TEST
+ALTERNATIVE FOR SKEWED DATA
+
+{Paragraph explaining the concept of skewness and its relevance for t
+tests.}
+
+\hypertarget{normality-test-shapiro-wilk}{%
+\paragraph{Normality test
+(Shapiro-Wilk)}\label{normality-test-shapiro-wilk}}
+
+Paragraph explaining the concept of normality testing.
+
+Needs updating for text.
+
+\hypertarget{actual-test}{%
+\subsubsection{Actual Test}\label{actual-test}}
+
+Datasets: Is it possible to have a dataset on which one can test all
+types of statistical tests? Can you reasonably run an independent and
+paired t test on the same dataset?
+
+Don't compare paired vs independent t tests.
+
+{Have the user choose whether the alternative is two sided, less, or
+greater, for purpose of demonstration it's less. TABLE DOESN'T WORK YET}
+
+\begin{table}[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:comparison_table}Paired Wilcoxon signed ranks test of the moon on outbursts}
+
+\begin{tabular}{ll}
+\toprule
+$V$ & \multicolumn{1}{c}{$p$}\\
+\midrule
+119.00 & < .001\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table}
+
+\hypertarget{hypothesis-testing}{%
+\subsubsection{Hypothesis Testing}\label{hypothesis-testing}}
+
+The analysis shows that you have t(14) = 6.45 with p = 0. This means
+that assuming the null hypothesis to be true, when running this test an
+infinite amount of times the chances of getting a score of 6.45 or
+higher would only occur in \ensuremath{8\times 10^{-4}}\% of cases.
+Since 0 is
+
+below the 0.05 threshold, the test is said to be significant and you can
+reject the null hypothesis.
+
+{Cannot just round, needs instead some evaluation like ``if p
+\textless{} 0.001, print that''}
+
+\hypertarget{misconceptions-on-hypothesis-testing-only-for-hv}{%
+\subparagraph{Misconceptions on Hypothesis Testing; ONLY FOR
+HV}\label{misconceptions-on-hypothesis-testing-only-for-hv}}
+
+Unfortunately, it is easy to misconceptions about the p-value. In order
+to avoid making incorrect assertions, take a look at the following
+statements that are all incorrect:
+
+\begin{itemize}
+\tightlist
+\item
+  The p-value states the chance of the null hypothesis being true. So if
+  a statistical analysis gives p = 0.034, then there is a 3.4\% chance
+  of the null hypothesis being true.
+\end{itemize}
+
+Since the p-value is calculated under the assumption of the null
+hypothesis being true, it logically cannot give any information on
+whether the null hypothesis is true or not.
+
+\begin{itemize}
+\tightlist
+\item
+  The p-value denotes the probability of a type \(I\) error. So if a
+  statistical analysis gives p = 0.034, then there is a 3.4\% chance of
+  falsely rejecting the null-hypothesis.
+\end{itemize}
+
+While this statement on the surface looks compelling, it underlies the
+same misconception of the previous statement. Since the p-value is
+calculated under the assumption of the null hypothesis being true, it
+cannot be linked to type \(I\) or \(II\) errors.
+
+\begin{itemize}
+\tightlist
+\item
+  A study with a lower p-value shows a more significant result than a
+  study with a higher p-value. In other words, a study with p
+  \textless{} 0.001 is more significant than a study with p \textless{}
+  0.05.
+\end{itemize}
+
+The p-value does not give any information on the significance of
+whatever was being tested. It only conveys statistical significance in
+the sense that the value is below a threshold (often set to 0.05), but
+it has no connection to effect size.
+
+\begin{itemize}
+\tightlist
+\item
+  A p-value of 0.05 means that we have observed data that would occur
+  only 5\% of the time under the null hypothesis.
+\end{itemize}
+
+This cannot be the case if you remember that the definition of the
+p-value is the probability of the observed data \textless span
+font-style: italic;\textgreater plus more extreme data assuming the null
+hypothesis to be true.
+
+\hypertarget{parameter-estimation}{%
+\paragraph{Parameter Estimation}\label{parameter-estimation}}
+
+Now that you confirmed the assumptions to hold, you conducted a Paired
+t-test to test whether the mean of the differences is greater than the
+NA. To conclude this, you want to reject the null-hypothesis that
+assumes the true difference in means to be 0.
+
+Specifically, you test for a difference in Outbursts by Condition with a
+95\% confidence interval.
+
+\hypertarget{misconceptiions-about-parameter-estimation-only-for-hv}{%
+\subparagraph{Misconceptiions about Parameter Estimation; ONLY FOR
+HV}\label{misconceptiions-about-parameter-estimation-only-for-hv}}
+
+In a similar vein as the misconceptions about the t-test for hypothesis
+testing, here are some statements of seemingly persuasive arguments
+which nonetheless are all false.
+
+\begin{itemize}
+\tightlist
+\item
+  You should use a one-sided p-value when you don't care about a result
+  in one direction, or that direction makes no conceptual sense.
+\end{itemize}
+
+This might come as a surprise, as the idea of a one-sided test seems
+appropriate to avoid ``false'' probabilities by including
+non-nonsensical possibilities. However, deciding on a one-sided test
+mathematically strengthens the evidence found in the tested direction,
+effectively allowing the beliefs and attitudes of the researcher to
+influence the statistical result.
+
+If you want to learn more about this issue, check out
+
+\hypertarget{limitations-of-nhst}{%
+\subsubsection{Limitations of NHST}\label{limitations-of-nhst}}
+
+There exist several criticisms to this method to determine the
+significance of an effect.
+
+\begin{itemize}
+\tightlist
+\item
+  it never actually tests the statistical hypothesis.
+\item
+  The threshold of 0.05 is arbitrary
+\item
+  due to its method, interpretations are often incorrect as they
+  forget/falsely assert the meaning of the probability being dependent
+  on the null hypothesis being true
+\item
+  requires blindness of the researchers on the data to avoid bias.
+\item
+\end{itemize}
+
+\hypertarget{sourcesreferences}{%
+\section{Sources/References}\label{sourcesreferences}}
+
+Fisher, R (1955). ``Statistical Methods and Scientific Induction''.
+Journal of the Royal Statistical Society, Series B. 17 (1): 69--78.
+
+Neyman, J; Pearson, E. S. (January 1, 1933). ``On the Problem of the
+most Efficient Tests of Statistical Hypotheses''. Philosophical
+Transactions of the Royal Society A. 231 (694--706): 289--337.
+
+\hypertarget{data}{%
+\subsection{Data}\label{data}}
+
+Wagenmakers, E.-J., Beek, T. F., Rotteveel, M., Gierholz, A., Matzke,
+D., Steingroever, H., \ldots{} Pinto, Y. (2015). Turning the hands of
+time again: A purely confirmatory replication study and a Bayesian
+analysis. Frontiers in Psychology, 6.
+
+Moore, D. S., McCabe, G. P., and Craig. B. A. (2012) Introduction to the
+Practice of Statistics (7th ed). New York: Freeman.
+
+\hypertarget{tests}{%
+\subsection{Tests}\label{tests}}
+
+Mann-Whitney Non-Parametric Test / Wilcoxon Rank Sum
+
+David F. Bauer (1972). Constructing confidence sets using rank
+statistics. Journal of the American Statistical Association 67,
+687--690. doi: 10.1080/01621459.1972.10481279.
+
+Myles Hollander and Douglas A. Wolfe (1973). Nonparametric Statistical
+Methods. New York: John Wiley \& Sons. Pages 27--33 (one-sample), 68--75
+(two-sample). Or second edition (1999).
+
+Shapiro-Wilk Normality Test
+
+Patrick Royston (1982). An extension of Shapiro and Wilk's WW test for
+normality to large samples. Applied Statistics, 31, 115--124.
+\url{doi:10.2307/2347973}.
+
+Levene's test
+
+Fox, J. and Weisberg, S. (2019) An R Companion to Applied Regression,
+Third Edition, Sage.
+
+Raincloud Plot
+
+Allen, M., Poggiali, D., Whitaker, K., Marshall, T. R., \& Kievit, R. A.
+(2019). Raincloud plots: a multi-platform tool for robust data
+visualization. Wellcome open research, 4, 63.
+\url{https://doi.org/10.12688/wellcomeopenres.15191.1}
+
+Student's t-test
+
+``Student'' William Sealy Gosset (1908). ``The probable error of a
+mean'' (PDF). Biometrika. 6 (1): 1--25. \url{doi:10.1093/biomet/6.1.1}.
+hdl:10338.dmlcz/143545.
+
+Welch's t-test
+
+Welch, B. L. (1947). ``The generalization of''Student's'' problem when
+several different population variances are involved''. Biometrika. 34
+(1--2): 28--35. \url{doi:10.1093/biomet/34.1-2.28}
+
+\end{document}
