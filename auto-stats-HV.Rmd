@@ -350,3 +350,9 @@ Student's t-test
 Welch's t-test
 
 Welch, B. L. (1947). "The generalization of "Student's" problem when several different population variances are involved". Biometrika. 34 (1–2): 28–35. doi:10.1093/biomet/34.1-2.28
+
+## Misconceptions
+
+Goodman, S. (2008). A Dirty Dozen: Twelve P-Value Misconceptions. Seminars in Hematology. 45 (3), 135-140. https://doi.org/10.1053/j.seminhematol.2008.04.003.
+
+Knottnerus, J. A., & Bouter, L. M. (2001). The ethics of sample size: two-sided testing and one-sided thinking. Journal of clinical epidemiology, 54(2), 109–110. https://doi.org/10.1016/s0895-4356(00)00276-6
