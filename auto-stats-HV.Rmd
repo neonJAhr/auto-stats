@@ -258,7 +258,7 @@ if (ttest$p.value < 0.05){
 
 `r colorize('Cannot just round, needs instead some evaluation like "if p < 0.001, print that"', "red")`
 
-##### Misconceptions on Hypothesis Testing; ONLY FOR HV
+##### Misconceptions on Hypothesis Testing
 
 Unfortunately, it is easy to misconceptions about the p-value. In order to avoid making incorrect assertions, take a look at the following statements that are all incorrect: 
 
@@ -284,7 +284,9 @@ Now that you confirmed the assumptions to hold, you conducted a `r ttest$method`
 
 Specifically, you test for a difference in `r ttest$data.name` with a `r as.numeric(attributes(ttest$conf.int)) * 100`% confidence interval.
 
-##### Misconceptiions about Parameter Estimation; ONLY FOR HV
+T
+
+##### Misconceptiions about Parameter Estimation
 
 In a similar vein as the misconceptions about the t-test for hypothesis testing, here are some statements of seemingly persuasive arguments which nonetheless are all false. 
 
@@ -293,6 +295,9 @@ In a similar vein as the misconceptions about the t-test for hypothesis testing,
 This might come as a surprise, as the idea of a one-sided test seems appropriate to avoid "false" probabilities by including non-nonsensical possibilities. However, deciding on a one-sided test mathematically strengthens the evidence found in the tested direction, effectively allowing the beliefs and attitudes of the researcher to influence the statistical result. 
 
 If you want to learn more about this issue, check out
+
+- If the probability that a random interval contains the true value is X%, then the plausibility or probability that a particular observed interval contains the true value is also X%; Or, alternatively, we can have X% confidence that the observed interval contains the true value.
+
 
 ### Limitations of NHST
 
