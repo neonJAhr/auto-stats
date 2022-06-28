@@ -29,7 +29,7 @@ colorize <- function(x, color) {
 }
 ```
 
-# How to Read This Document
+## How to Read This Document
 
 Currently, this is a static html page for output. This document is a report that becomes the output when a person is doing an analysis on data. 
 
@@ -86,27 +86,33 @@ SELECT DV AND IV.
 ttest <- t.test(data = data_paired, Outbursts~Condition, var.equal = TRUE, alternative = alternative, paired = is_paired)
 ```
 
-`r colorize('Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value. Though this wouldn not work as for paired data, specific columns would be selected to compare between.', "red")`
+`r colorize('Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value. Though this wouldn not work as for paired data, specific columns would be selected to compare between.', "red")` Edit: Changed the file to fit requirements of paired tests.
 
-# High Verbosity (HV)
 
-### Introduction: What are you achieving with this test?
+
+## High Verbosity (HV)
+
+### 1. Introduction
+
+#### What are you achieving with this test?
 
 Dear user,
-You selected to conduct a Student's t-test. This test checks whether the data follows a Student's t-Distribution under the null hypothesis. It is often used to see whether the means of two sets of data are significantly different from one another.  
+You selected to conduct a Student's t-test. This test checks whether the data follows a Student's t-Distribution under the null hypothesis. It is often used to see whether the means of two sets of data are significantly different from one another. 
 
-### What is Null-Hypothesis Significance Testing (NHST)?
+`r colorize('Based on what you entered like IV & DV. That would conceptually mean ou are testing this on this.', "red")`
+
+#### What is Null-Hypothesis Significance Testing (NHST)?
 
 Why are we doing this? It's a comparison between means?
 But you could also just estimate parameters
 
 This procedure tests whether the group means are equal, but also the size of the difference assumption it's not zero.
 
-When researchers want to test whether some property or parameter has an effect on the distribution of observed data, they conduct a null hypothesis test. In this case, the null hypothesis assumes that the parameter influencing the distribution has no effect, i.e. is equal to zero. In contrast, the alternative/statistical hypothesis calculates the size of the effect on the distribution.
+When researchers want to test whether some property or parameter has an effect on the distribution of observed data, they conduct a null hypothesis test. In this case, the null hypothesis assumes that the parameter influencing the distribution has no effect, i.e. it is equal to zero. In contrast, the alternative/statistical hypothesis calculates the size of the effect on the distribution.
 
 Statistical significance is asserted via the p-value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. In other words, were one to repeat this experiment and collect data each time, the chance of getting a test result that is as high or higher as the observed result would only occur in p-value*100 percent of the time. Significance is assumed if the p-value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level.
 
-### Descriptives
+### 2. Descriptives
 
 The data can be visualized with the help of a raincloud plot (Allen et al., 2019). This allows an immediate intuitive assessment of whether the groups differ, and whether the data in each group are approximately normally distributed.
 
@@ -116,7 +122,7 @@ The data can be visualized with the help of a raincloud plot (Allen et al., 2019
 
 Check for Model Misspecifications.
 
-### Assumption Checks
+#### Assumption Checks
 
 Before you can conduct a `r ttest$method`, we first need to check for assumptions that need to be held in order for the test to be valid. The assumptions for a `r ttest$method` are as follows:
 
@@ -129,6 +135,7 @@ Before you can conduct a `r ttest$method`, we first need to check for assumption
 #### Equality of Variance / Homoscedasity
 
 `r colorize("Paragraph explaining the necessity of equality of variance", "red")`
+T-tests require both groups of data to have similar variance. If one 
 
 ```{r HV_homoscedasity_test, include = FALSE}
 # Find Levene's test as code
@@ -197,7 +204,7 @@ if (sw_test$p.value < 0.05) {
 
 `r colorize("Paragraph explaining the concept of normality testing. Needs updating for text.", "red")`
 
-### Actual Test
+#### Actual Test
 
 `r colorize("Datasets: Is it possible to have a dataset on which one can test all types of statistical tests? Can you reasonably run an independent and paired t test on the same dataset?", "red")`
 
@@ -245,7 +252,7 @@ if (is_paired) {
 apa_table(cbind(apa_t$table, apa_welch$table, apa_wilcox$table))
 ```
 
-### Hypothesis Testing
+### 3. Hypothesis Testing
 
 The analysis shows that you have `r attributes(ttest$statistic)`(`r ttest$parameter`) = `r round(ttest$statistic, 2)` with p = `r round(ttest$p.value, 4)`. This means that assuming the null hypothesis to be true, when running this test an infinite amount of times the chances of getting a score of `r round(ttest$statistic, 2)` or higher would only occur in `r round(ttest$p.value * 100, 4)`% of cases. Since `r round(ttest$p.value, 4)` is
 ```{r HV_signif, include=FALSE}
@@ -278,7 +285,7 @@ The p-value does not give any information on the significance of whatever was be
 
 This cannot be the case if you remember that the definition of the p-value is the probability of the observed data <span font-style: italic;>plus more extreme data</span> assuming the null hypothesis to be true.
 
-#### Parameter Estimation
+### 4. Parameter Estimation
 
 Now that you confirmed the assumptions to hold, you conducted a `r ttest$method` to test whether the `r attributes(ttest$estimate[1])` is `r ttest$alternative` than the `r attributes(ttest$estimate[2])`. To conclude this, you want to reject the null-hypothesis that assumes the true `r attributes(ttest$null.value)` to be `r ttest$null.value`.
 
@@ -294,7 +301,7 @@ This might come as a surprise, as the idea of a one-sided test seems appropriate
 
 If you want to learn more about this issue, check out
 
-### Limitations of NHST
+#### Limitations of NHST
 
 There exist several criticisms to this method to determine the significance of an effect. 
 
@@ -305,21 +312,21 @@ There exist several criticisms to this method to determine the significance of a
 - 
 
 
-# Sources/References
+### 5. Sources/References
 
 Fisher, R (1955). "Statistical Methods and Scientific Induction". Journal of the Royal Statistical Society, Series B. 17 (1): 69–78.
 
 Neyman, J; Pearson, E. S. (January 1, 1933). "On the Problem of the most Efficient Tests of Statistical Hypotheses". Philosophical Transactions of the Royal Society A. 231 (694–706): 289–337.
 
-## Data
+#### Data
 
 Wagenmakers, E.-J., Beek, T. F., Rotteveel, M., Gierholz, A., Matzke, D., Steingroever, H., … Pinto, Y. (2015). Turning the hands of time again: A purely confirmatory replication study and a Bayesian analysis. Frontiers in Psychology, 6.
 
 Moore, D. S., McCabe, G. P., and Craig. B. A. (2012) Introduction to the Practice of Statistics (7th ed). New York: Freeman.
 
-## Tests
+#### Tests
 
-Mann-Whitney Non-Parametric Test / Wilcoxon Rank Sum
+##### Mann-Whitney Non-Parametric Test / Wilcoxon Rank Sum
 
 David F. Bauer (1972). Constructing confidence sets using rank statistics. Journal of the American Statistical Association 67, 687–690. doi: 10.1080/01621459.1972.10481279.
 
@@ -327,31 +334,31 @@ Myles Hollander and Douglas A. Wolfe (1973). Nonparametric Statistical Methods. 
 Or second edition (1999).
 
 
-Shapiro-Wilk Normality Test
+##### Shapiro-Wilk Normality Test
 
 Patrick Royston (1982). An extension of Shapiro and Wilk's WW test for normality to large samples. Applied Statistics, 31, 115–124. doi:10.2307/2347973.
 
 
-Levene's test
+##### Levene's test
 
 Fox, J. and Weisberg, S. (2019) An R Companion to Applied Regression, Third Edition, Sage.
 
 
-Raincloud Plot
+##### Raincloud Plot
 
 Allen, M., Poggiali, D., Whitaker, K., Marshall, T. R., & Kievit, R. A. (2019). Raincloud plots: a multi-platform tool for robust data visualization. Wellcome open research, 4, 63. https://doi.org/10.12688/wellcomeopenres.15191.1
 
 
-Student's t-test
+##### Student's t-test
 
 "Student" William Sealy Gosset (1908). "The probable error of a mean" (PDF). Biometrika. 6 (1): 1–25. doi:10.1093/biomet/6.1.1. hdl:10338.dmlcz/143545.
 
 
-Welch's t-test
+##### Welch's t-test
 
 Welch, B. L. (1947). "The generalization of "Student's" problem when several different population variances are involved". Biometrika. 34 (1–2): 28–35. doi:10.1093/biomet/34.1-2.28
 
-## Misconceptions
+#### Misconceptions
 
 Goodman, S. (2008). A Dirty Dozen: Twelve P-Value Misconceptions. Seminars in Hematology. 45 (3), 135-140. https://doi.org/10.1053/j.seminhematol.2008.04.003.
 
