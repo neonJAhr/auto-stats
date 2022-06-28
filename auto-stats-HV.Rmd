@@ -15,7 +15,6 @@ library("e1071")
 library("tidyverse")
 library("papaja")
 library("citr")
-
 ```
 
 ```{r colorfunction, include=FALSE}
@@ -299,7 +298,7 @@ In a similar vein as the misconceptions about the t-test for hypothesis testing,
 
 This might come as a surprise, as the idea of a one-sided test seems appropriate to avoid "false" probabilities by including non-nonsensical possibilities. However, deciding on a one-sided test mathematically strengthens the evidence found in the tested direction, effectively allowing the beliefs and attitudes of the researcher to influence the statistical result. 
 
-If you want to learn more about this issue, check out
+If you want to learn more about this issue, check out `r colorize('THIS PAPER', "red")`
 
 #### Limitations of NHST
 
@@ -342,6 +341,7 @@ Patrick Royston (1982). An extension of Shapiro and Wilk's WW test for normality
 ##### Levene's test
 
 Fox, J. and Weisberg, S. (2019) An R Companion to Applied Regression, Third Edition, Sage.
+
 
 
 ##### Raincloud Plot
