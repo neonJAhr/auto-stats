@@ -180,7 +180,7 @@ It also assumes there to be no significant outliers that skew the results. To te
 ```{r HV_skewness, include=FALSE}
 skew <- skewness(data_paired$Outbursts)
 if (abs(skew) >= 1) {
-  skewOutput <- "The distribution of your data is highly skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA"
+  skewOutput <- "The distribution of your data is highly skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, such as ranked-based Wilcox test"
 } else if (abs(skew) > 0.5 & abs(skew) < 1) {
   skewOutput <- "The distribution of your data is moderately skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you run could a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA"
 } else {skewOutput <- "distribution of your data is only mildly skewed, which means that you can assume normality for your data sets."}
