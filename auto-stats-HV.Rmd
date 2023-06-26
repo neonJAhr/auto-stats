@@ -175,7 +175,7 @@ It also assumes there to be no significant outliers that skew the results. To te
 
 #### Skewness
 
-"Although paired t test are relatively robust to skewness, you could either do a transformation (e.g. log-transform), or consider to compare the results to a rank-based test"
+"Although paired t-tests are relatively robust to skewness, you could either do a transformation (e.g. log-transform), or consider to compare the results to a rank-based test"
 
 ```{r HV_skewness, include=FALSE}
 skew <- skewness(data_paired$Outbursts)
@@ -266,7 +266,7 @@ if (ttest$p.value < 0.05){
 
 ##### Misconceptions on Hypothesis Testing; ONLY FOR HV
 
-Unfortunately, it is easy to misconceptions about the p-value. In order to avoid making incorrect assertions, take a look at the following statements that are all incorrect: 
+Unfortunately, it is easy to have misconceptions about the p-value. In order to avoid making incorrect assertions, let's take a look at the following statements that are all incorrect: 
 
 - The p-value states the chance of the null hypothesis being true. So if a statistical analysis gives p = 0.034, then there is a 3.4% chance of the null hypothesis being true.
 
@@ -290,7 +290,7 @@ Now that you confirmed the assumptions to hold, you conducted a `r ttest$method`
 
 Specifically, you test for a difference in `r ttest$data.name` with a `r as.numeric(attributes(ttest$conf.int)) * 100`% confidence interval.
 
-##### Misconceptiions about Parameter Estimation; ONLY FOR HV
+##### Misconceptions about Parameter Estimation; ONLY FOR HV
 
 In a similar vein as the misconceptions about the t-test for hypothesis testing, here are some statements of seemingly persuasive arguments which nonetheless are all false. 
 

@@ -59,37 +59,34 @@ This document assumes the user is using one of the JASP library datasets. As the
 
 ☐ Kitchen Rolls & Independent Samples t-Test (not significant results)
 
-☑ Moon and Aggression & Paired Samples t-Test
+☐ Moon and Aggression & Paired Samples t-Test
 
 ☐ Weight Gain & One Sample t-Test
 
-The Moon and Aggression data is selected. 
+☑ Student's Sleep Data & Paired Samples t-Test
+
+Student's Sleep Data `sleep` is selected. 
 
 ```{r data_input, include=FALSE}
-data <- read.csv("kitchenRollsTTest.csv")
+dataKitchen <- read.csv("kitchenRollsTTest.csv")
+data <- sleep
+
+# TO BE FIXED: data_paired was originally assigned sleep, but it is NOT paired data!
+# data_paired <- read.csv("moonAggression.csv")
 data_paired <- sleep
 ```
 
-ONLY FOCUS ON THE PAIRED T-TEST.
-
-<span style="color: red;">
-SELECT DV AND IV.
-Maybe force the IV to be [,1] and the DV to be [,2] so the following steps can just refer to those columns? Otherwise generalize it so that following tests call upon the placeholder value.</span>
+The IV is `group`, and the DV is `extra`. 
 
 ### Introduction: What are you achieving with this test?
-
-Data should follow a normal distribution, but the variance from repeating the experiment follows a t-distribution. 
-
 
 Dear user,
 You selected to conduct a Student's t-test. This test checks whether the data follows a Student's t-Distribution under the null hypothesis. It is often used to see whether the means of two sets of data are significantly different from one another.  
 
 First let’s take a look at the data as a raincloud plot: 
 
-<span style="color: red;">INSERT RAINCLOUD PLOT HERE
-
-```{r raincloud_plot, include=FALSE}
-data_paired %>% 
+```{r raincloud_plot, echo=FALSE}
+data %>% 
   # filter(group) %>% 
   ggplot(aes(x = factor(group), y = extra, fill = factor(group))) +
   
@@ -115,7 +112,7 @@ data_paired %>%
     # adjusting position
     justification = 1.1,
     # adjust grouping (binning) of observations
-    binwidth = 0.25
+    binwidth = 0.1
   ) +
   # Themes and Labels
   scale_fill_tq() +
@@ -129,19 +126,20 @@ data_paired %>%
   coord_flip()
 ```
 
+VISUAL CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS
 
-VISUALLY CONFIRMATION OF EQUAL VARIANCE BETWEEN DATA SETS & OUTLIERS
-
-Check for Model Misspecifications. </span>
+Check for Model Misspecifications.
 
 # Low Verbosity Level
 
 ### Descriptions (Assumptions about Outliers, Skewness, Homoscedasticity)
 
+QUESTION: Should we only use Brown-Forsythe test? "The B-F test is less likely than the Levene test to incorrectly declare that the assumption of equal variances has been violated." (https://www.statisticshowto.com/brown-forsythe-test/) `r colorize('INSERT/TODO: If quoted, this needs to go into references!', "red")`
+
 ```{r LV_homogeneity_of_variance, include = FALSE}
 # Find Levene's test as code
-leveneTest(data_paired$extra, group = data_paired$group)
-levTest <- leveneTest(data_paired$extra, group = data_paired$group)
+leveneTest(data$extra, group = data$group)
+levTest <- leveneTest(data$extra, group = data$group)
 if (levTest$`Pr(>F)`[1] < 0.05) {
   levTestResult <- "The test showed significance, meeting that there is a difference in the variance of the two groups. That in turn means that the results of the t-test cannot be interpreted as valid. Instead of a Student's t-test, consider running a Welch's t-test which does not assume equal variance."
 } else {
@@ -149,9 +147,11 @@ if (levTest$`Pr(>F)`[1] < 0.05) {
 }
 ```
 
+To test homogeneity of variance, Levene's test was performed. `r levTestResult`
+
 ```{r LV_test_outliers, include=FALSE}
-dixon <- dixon.test(data_paired[,1])
-grubbs <- grubbs.test(data_paired[,1])
+dixon <- dixon.test(data[,1])
+grubbs <- grubbs.test(data[,1])
 
 if (grubbs$p.value > 0.05 & dixon$p.value > 0.05) {
   outlier_test <- TRUE
@@ -162,25 +162,28 @@ if (grubbs$p.value > 0.05 & dixon$p.value > 0.05) {
   }
 ```
 
+`r outliers`
+
 ```{r LV_normality_test, include=FALSE}
-sw_test <- shapiro.test(data_paired[,1])
+sw_test <- shapiro.test(data[,1])
 if (sw_test$p.value < 0.05) {
   sw_test_result <- "The Shapiro-Wilk test concluded significance, meaning that the dataset does not follow a normal distribution. Therefore you cannot conclude valid results from the t-test."
 } else {
-  sw_test_result <- "The Shapiro-Wilk test showed that the data does not differ significantly from normal distribution."
+  sw_test_result <- "The Shapiro-Wilk test showed that the data does not differ significantly from normal distribution. (That is good!)"
 }
 ```
 
+The Shapiro-Wilk test is a statistical test that tests the null hypothesis that a sample came from a normally distributed population. `r sw_test_result`
 
 ```{r example_test, include=FALSE}
 # This code chunk needs to be before any reference to the statistic itself.
 
 # Additionally, this ttest is there to ensure a ttest object exists (as mentioned in issue below). 
-ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
+ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
 
 if (outlier_test == TRUE & levTest$`Pr(>F)`[1] <= 0.05 & sw_test$p.value >= 0.05) {
-  # ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
-  ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, paired = TRUE, alternative = "less")
+  # ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
+  ttest <- t.test(data = data, extra~group, var.equal = TRUE, paired = TRUE, alternative = "less")
  
   ttest
   ttest$p.value
@@ -204,13 +207,11 @@ The estimated parameter is `r attributes(ttest$statistic)`(`r ttest$parameter`) 
 ```{r LV_signif, include=FALSE}
 if (ttest$p.value < 0.05)
   {
-  signif <- "Since your p-value was below 0.05, the test is statistically significant."
+  signif <- "Since your p value was below 0.05, the test is statistically significant."
 } else {
-  signif <- "Since your p-value was above 0.05, the test is not statistically significant."}
+  signif <- "Since your p value was above 0.05, the test is not statistically significant."}
 ```
 
-<span style="color: red;">Which style do we use in JASP? APA style uses the term "p value", while the American Statistical Association uses "p-value".</span>
-Answer: APA style
 
 #### Hypothesis Testing
 
@@ -222,8 +223,8 @@ Your null-hypothesis assumed that the control condition's mean was not `r ttest$
 
 ```{r MV_homoscedasity_test, include = FALSE}
 # Find Levene's test as code
-leveneTest(data_paired$extra, group = data_paired$group)
-levTest <- leveneTest(data_paired$extra, group = data_paired$group)
+leveneTest(data$extra, group = data$group)
+levTest <- leveneTest(data$extra, group = data$group)
 if (levTest$`Pr(>F)`[1] < 0.05) {
   levTestResult <- "The test showed significance, meeting that there is a difference in the variance of the two groups. That in turn means that the results of the t-test cannot be interpreted as valid. Instead of a Student's t-test, consider running a Welch's t-test which does not assume equal variance."
 } else {
@@ -239,8 +240,8 @@ Before you can conduct a `r ttest$method`, we first need to check for assumption
 To test homogeneity of variance, Levene's test was performed. `r levTestResult`
 
 ```{r MV_test_outliers, include=FALSE}
-dixon <- dixon.test(data_paired[,1])
-grubbs <- grubbs.test(data_paired[,1])
+dixon <- dixon.test(data[,1])
+grubbs <- grubbs.test(data[,1])
 ```
 
 ```{r MV_outliers_output, include=FALSE}
@@ -253,14 +254,15 @@ if (grubbs$p.value > 0.05 & dixon$p.value > 0.05) {
   outliers <- cat("Unfortunately, both the Dixon's Q test and the Grubb's test for outliers found a significance of the greatest outlier, Q = ", dixon$statistic[1], "stating that the", dixon$alternative,"p =", dixon$p.value,". G = ", grubbs$statistic[1], "U =", grubbs$statistic[2], "p =", grubbs$p.value,". This means that you should consider excluding the outlier. Don't forget to mention this in the report!")
 }
 ```
+
 It also assumes there to be no significant outliers that skew the results. To test this, both a Grubb's test and a Dixon's Q test were conducted. `r outliers`
 
 ```{r MV_skewness, include=FALSE}
-skew <- skewness(data_paired$extra)
+skew <- skewness(data$extra)
 if (abs(skew) > 1) {
-  skewOutput <- cat("The distribution of your data is highly skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA")
+  skewOutput <- cat("The distribution of your data is highly skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, e.g. the Mann-Whitney U test or Kruskal-Wallis test.")
 } else if (abs(skew) > 0.5 & abs(skew) <= 1) {
-  skewOutput <- cat("The distribution of your data is moderately skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you run could a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA")
+  skewOutput <- cat("The distribution of your data is moderately skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, e.g. the Mann-Whitney U test or Kruskal-Wallis test.")
 } else {skewOutput <- "distribution of your data is only mildly skewed, which means that you can assume normality for your data sets."}
 ```
 Last, a skewness test was conducted to see how non-symmetric your data set is. `r skewOutput`
@@ -311,10 +313,10 @@ OLD VERSION: When researchers want to test a hypothesis, they usually [Is 'usual
 NEW VERSION: When researchers want to test whether some property or parameter has an effect on the distribution of observed data, they conduct a null hypothesis test. In this case, the null hypothesis assumes that the parameter influencing the distribution has no effect, i.e. is equal to zero. In contrast, the alternative/statistical hypothesis calculates the size of the effect on the distribution. 
 
 <span style="text-decoration: line-through;">
-In many frequentist statistics, the way to determine significance is done via the p-value. While originally proposed by Fisher (1955) and not related to the idea of comparing hypotheses as proposed by Neyman and Pearson (1933)
+In many frequentist statistics, the way to determine significance is done via the p value. While originally proposed by Fisher (1955) and not related to the idea of comparing hypotheses as proposed by Neyman and Pearson (1933)
 </span>
 
-Statistical significance is asserted via the p-value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. In other words, were one to repeat this experiment and collect data each time, the chance of getting a test result that is as high or higher as the observed result would only occur in p-value*100 percent of the time. Significance is assumed if the p-value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level. 
+Statistical significance is asserted via the p value. This value calculated by the probability of obtaining a parameter that is at least as extreme as the observed parameter, assuming the null hypothesis to be correct/true. In other words, were one to repeat this experiment and collect data each time, the chance of getting a test result that is as high or higher as the observed result would only occur in p value*100 percent of the time. Significance is assumed if the p value falls below some previously asserted threshold value, usually set to 0.05, also known as the alpha level. 
 
 <span style="color: red;">Is the word parameter here correct? Or do I need to say test result?</span>
 
@@ -325,8 +327,8 @@ Statistical significance is asserted via the p-value. This value calculated by t
 # Assumption of Equality of Variances
 
 # Find Levene's test as code
-leveneTest(data_paired$extra, group = data_paired$group)
-levTest <- leveneTest(data_paired$extra, group = data_paired$group)
+leveneTest(data$extra, group = data$group)
+levTest <- leveneTest(data$extra, group = data$group)
 if (levTest$`Pr(>F)`[1] < 0.05) {
   levTestResult <- "The test showed significance, meeting that there is a difference in the variance of the two groups. That in turn means that the results of the t-test cannot be interpreted as valid. Instead of a Student's t-test, consider running a Welch's t-test which does not assume equal variance."
 } else {
@@ -334,7 +336,7 @@ if (levTest$`Pr(>F)`[1] < 0.05) {
 }
 
 # Brown-Forsythe
-bfTest <- onewaytests::bf.test(extra ~ group, data = data_paired)
+bfTest <- onewaytests::bf.test(extra ~ group, data = data)
 if (bfTest$p.value[1] < 0.05) {
   bfTestResult <- "The test showed significance, meeting that there is a difference in the variance of the two groups. That in turn means that the results of the t-test cannot be interpreted as valid. Instead of a Student's t-test, consider running a Welch's t-test which does not assume equal variance."
 } else {
@@ -358,8 +360,8 @@ A t-test (and the other types of ANOVAs as well as regressions) assumes that alt
 To test homogeneity of variance, Levene's test was performed. `r levTestResult`
 
 ```{r HV_test_outliers, include=FALSE}
-dixon <- dixon.test(data_paired[,1])
-grubbs <- grubbs.test(data_paired[,1])
+dixon <- dixon.test(data[,1])
+grubbs <- grubbs.test(data[,1])
 ```
 
 ```{r HV_outliers_output, include=FALSE}
@@ -382,14 +384,14 @@ It also assumes there to be no significant outliers that skew the results. To te
 
 #### Skewness 
 
-"Although paired t test are relatively robust to skewness, you could either do a transfomation (e.g. log-transform), or consider to compare the results to a rank-based test"
+"Although paired t test are relatively robust to skewness, you could either do a transformation (e.g. log-transform), or consider to compare the results to a rank-based test"
 
 ```{r HV_skewness, include=FALSE}
-skew <- skewness(data_paired$extra)
+skew <- skewness(data$extra)
 if (abs(skew) > 1) {
-  skewOutput <- cat("The distribution of your data is highly skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA")
+  skewOutput <- cat("The distribution of your data is highly skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you could run a different test, e.g. the Mann-Whitney U test or Kruskal-Wallis test.")
 } else if (abs(skew) > 0.5 & abs(skew) <= 1) {
-  skewOutput <- cat("The distribution of your data is moderately skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you run could a different test, such as INSERT TEST ALTERNATIVE FOR SKEWED DATA")
+  skewOutput <- cat("The distribution of your data is moderately skewed, which means you cannot assume a normality in your distribution. This is not necessarily a problem, as long as your data set should be sufficiently large (n per group < 20) to have a valid t-test result. Alternatively, you run could a different test, e.g. the Mann-Whitney U test or Kruskal-Wallis test.")
 } else {skewOutput <- "distribution of your data is only mildly skewed, which means that you can assume normality for your data sets."}
 ```
 Last, a skewness test was conducted to see how non-symmetric your data set is. `r skewOutput`
@@ -399,7 +401,7 @@ Last, a skewness test was conducted to see how non-symmetric your data set is. `
 #### Normality test (Shapiro-Wilk)
 
 ```{r HV_normality_test, include=FALSE}
-sw_test <- shapiro.test(data_paired[,1])
+sw_test <- shapiro.test(data[,1])
 if (sw_test$p.value < 0.05) {
   sw_test_result <- "The Shapiro-Wilk test concluded significance, meaning that the dataset does not follow a normal distribution. Therefore you cannot conclude valid results from the t-test."
 } else {
@@ -407,41 +409,48 @@ if (sw_test$p.value < 0.05) {
 }
 ```
 
-<span style="color: red;">Paragraph explaining the concept of normality testing.
+The Shapiro-Wilk test is a statistical test that tests the null hypothesis that a sample came from a normally distributed population. `r sw_test_result`
 
-Needs updating for text.</span>
+INSERT/TODO: If the user does a one-way or one-sample t-test, include the following for normality assumptions: One common misconception when doing hypothesis testing with an ANOVA is that the normality assumption must be met for all groups. However, the one-way ANOVA is considered a robust test against the normality assumption, meaning that it tolerates violations to its normality assumption rather well1.
 
 ### Actual Test
 
 <span style="color: red;">Datasets: Is it possible to have a dataset on which one can test all types of statistical tests? Can you reasonably run an independent and paired t test on the same dataset?
+
+INSERT/TODO Still needs updating to only compare either independent or paired tests.
+For a discussion on choosing between the t-test and nonparametric alternatives, see Lumley, et al. (2002).
+
 
 Don't compare paired vs independent t tests.</span>
 
 ```{r all_types_of_tests, include=FALSE}
 # Instead of the assumptions determining the best test, depict all tests and show which one is holding up the best when compared
 
-ind_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
-ind_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "less")
-ind_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = TRUE, alternative = "greater")
+ind_twoside_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = TRUE, alternative = "two.sided")
+ind_less_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = TRUE, alternative = "less")
+ind_more_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = TRUE, alternative = "greater")
 
 paired_twoside_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "two.sided", paired = TRUE)
 paired_less_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "less", paired = TRUE)
 paired_more_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "greater", paired = TRUE)
 
-welch_twoside_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "two.sided")
-welch_less_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "less")
-welch_more_ttest <- t.test(data = data, mean_NEO~Rotation, var.equal = FALSE, alternative = "greater")
+welch_twoside_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = FALSE, alternative = "two.sided")
+welch_less_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = FALSE, alternative = "less")
+welch_more_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = FALSE, alternative = "greater")
 
-ind_twoside_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "two.sided")
-ind_less_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "less")
-ind_more_wilcox <- wilcox.test(data = data, mean_NEO~Rotation, alternative = "greater")
+ind_twoside_wilcox <- wilcox.test(data = dataKitchen, mean_NEO~Rotation, alternative = "two.sided")
+ind_less_wilcox <- wilcox.test(data = dataKitchen, mean_NEO~Rotation, alternative = "less")
+ind_more_wilcox <- wilcox.test(data = dataKitchen, mean_NEO~Rotation, alternative = "greater")
 
 paired_twoside_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "two.sided", paired = TRUE)
 paired_less_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "less", paired = TRUE)
 paired_more_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "greater", paired = TRUE)
 ```
 
-<span style="color: red;">Have the user choose whether the alternative is two sided, less, or greater, for purpose of demonstration it's less. TABLE DOESN'T WORK YET</span>
+<span style="color: red;">Have the user choose whether the alternative is two sided, less, or greater, for purpose of demonstration it's less. 
+
+INSERT/TODO: TABLE DOESN'T WORK YET</span>
+
 ```{r comparison_table, include=FALSE}
 # anova(ind_less_ttest,paired_less_ttest,welch_less_ttest,ind_less_wilcox,paired_less_wilcox)
 ```
@@ -457,16 +466,19 @@ if (ttest$p.value < 0.05){
 ```
 `r signif`
 
-##### Misconceptions on Hypothesis Testing; ONLY FOR HV
+##### Misconceptions on Hypothesis Testing
+
+One common misconception about Hypothesis Testing is that after computing an appropriate decision statistic under NHST (Null Hypothesis Significance Testing), you determined whether or not this provides sufficient evidence to reject the assumption that the Null Hypothesis is true. However, this does not mean that we have proven which hypothesis is true. If there are multiple hypotheses as to why there could be a difference between the populations, consider doing an ANOVA, where you can test between more than two hypotheses. 
 
 #### Parameter Estimation
 Now that you confirmed the assumptions to hold, you conducted a `r ttest$method` to test whether the `r attributes(ttest$estimate[1])` is `r ttest$alternative` than the `r attributes(ttest$estimate[2])`. To conclude this, you want to reject the null-hypothesis that assumes the true `r attributes(ttest$null.value)` to be `r ttest$null.value`.
 
 Specifically, you test for a difference in `r ttest$data.name` with a `r as.numeric(attributes(ttest$conf.int)) * 100`% confidence interval.
 
-##### Misconceptiions about Parameter Estimation; ONLY FOR HV
+#### Misconceptions about Parameter Estimation
 
 INSTEAD OF ITS OWN SECTION
+
 ### Limitations of NHST
 
 There exist several criticisms to this method to determine the significance of an effect. 
@@ -475,20 +487,22 @@ There exist several criticisms to this method to determine the significance of a
 - The threshold of 0.05 is arbitrary
 - due to its method, interpretations are often incorrect as they forget/falsely assert the meaning of the probability being dependent on the null hypothesis being true
 - requires blindness of the researchers on the data to avoid bias. 
-- 
 
-RESCHEDULE NEXT WEEK TO THURSDAY
-If publicly available, then 
 
 # Sources/References
 
 Fisher, R (1955). "Statistical Methods and Scientific Induction". Journal of the Royal Statistical Society, Series B. 17 (1): 69–78.
 
-Neyman, J; Pearson, E. S. (January 1, 1933). "On the Problem of the most Efficient Tests of Statistical Hypotheses". Philosophical Transactions of the Royal Society A. 231 (694–706): 289–337. 
+Lumley, T., Diehr, P.; Emerson, S., Chen, L. (2002). "The Importance of the Normality Assumption in Large Public Health Data Sets". Annual Review of Public Health. 23 (1): 151–169. doi:10.1146/annurev.publhealth.23.100901.140546. ISSN 0163-7525. PMID 11910059.
+
+Neyman, J, Pearson, E. S. (1933). "On the Problem of the most Efficient Tests of Statistical Hypotheses". Philosophical Transactions of the Royal Society A. 231 (694–706): 289–337. 
 
 ## Tests
 
-<span style="color: red;">Raincloud Plots Paper</span>
+<span style="color: red;">
+Raincloud Plots Paper
+Kruskal-Wallis test
+</span>
 
 Mann-Whitney Non-Parametric Test / Wilcoxon Rank Sum
 David F. Bauer (1972). Constructing confidence sets using rank statistics. Journal of the American Statistical Association 67, 687–690. doi: 10.1080/01621459.1972.10481279.
@@ -511,4 +525,3 @@ Student's t-test
 
 Welch's t-test
 Welch, B. L. (1947). "The generalization of "Student's" problem when several different population variances are involved". Biometrika. 34 (1–2): 28–35. doi:10.1093/biomet/34.1-2.28
-
