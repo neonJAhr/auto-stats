@@ -72,8 +72,8 @@ dataKitchen <- read.csv("kitchenRollsTTest.csv")
 data <- sleep
 
 # TO BE FIXED: data_paired was originally assigned sleep, but it is NOT paired data!
-# data_paired <- read.csv("moonAggression.csv")
-data_paired <- sleep
+data_paired <- read.csv("moonAggression.csv")
+# data_paired <- sleep
 ```
 
 The IV is `group`, and the DV is `extra`. 
@@ -430,9 +430,9 @@ ind_twoside_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = T
 ind_less_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = TRUE, alternative = "less")
 ind_more_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = TRUE, alternative = "greater")
 
-paired_twoside_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "two.sided", paired = TRUE)
-paired_less_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "less", paired = TRUE)
-paired_more_ttest <- t.test(data = data_paired, extra~group, var.equal = TRUE, alternative = "greater", paired = TRUE)
+paired_twoside_ttest <- t.test(data = data_paired, Moon~Other, var.equal = TRUE, alternative = "two.sided", paired = TRUE)
+paired_less_ttest <- t.test(data = data_paired, Moon~Other, var.equal = TRUE, alternative = "less", paired = TRUE)
+paired_more_ttest <- t.test(data = data_paired, Moon~Other, var.equal = TRUE, alternative = "greater", paired = TRUE)
 
 welch_twoside_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = FALSE, alternative = "two.sided")
 welch_less_ttest <- t.test(data = dataKitchen, mean_NEO~Rotation, var.equal = FALSE, alternative = "less")
@@ -442,14 +442,16 @@ ind_twoside_wilcox <- wilcox.test(data = dataKitchen, mean_NEO~Rotation, alterna
 ind_less_wilcox <- wilcox.test(data = dataKitchen, mean_NEO~Rotation, alternative = "less")
 ind_more_wilcox <- wilcox.test(data = dataKitchen, mean_NEO~Rotation, alternative = "greater")
 
-paired_twoside_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "two.sided", paired = TRUE)
-paired_less_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "less", paired = TRUE)
-paired_more_wilcox <- wilcox.test(data = data_paired, extra~group, alternative = "greater", paired = TRUE)
+paired_twoside_wilcox <- wilcox.test(data = data_paired, Moon~Other, alternative = "two.sided", paired = TRUE)
+paired_less_wilcox <- wilcox.test(data = data_paired, Moon~Other, alternative = "less", paired = TRUE)
+paired_more_wilcox <- wilcox.test(data = data_paired, Moon~Other, alternative = "greater", paired = TRUE)
 ```
 
 <span style="color: red;">Have the user choose whether the alternative is two sided, less, or greater, for purpose of demonstration it's less. 
 
 INSERT/TODO: TABLE DOESN'T WORK YET</span>
+
+<span style="color: red;">Fix Actual tests for moonAgression dataset.</span>
 
 ```{r comparison_table, include=FALSE}
 # anova(ind_less_ttest,paired_less_ttest,welch_less_ttest,ind_less_wilcox,paired_less_wilcox)

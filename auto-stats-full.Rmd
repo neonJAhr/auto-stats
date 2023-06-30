@@ -475,7 +475,6 @@ There exist several criticisms to this method to determine the significance of a
 - The threshold of 0.05 is arbitrary
 - due to its method, interpretations are often incorrect as they forget/falsely assert the meaning of the probability being dependent on the null hypothesis being true
 - requires blindness of the researchers on the data to avoid bias. 
-- 
 
 RESCHEDULE NEXT WEEK TO THURSDAY
 If publicly available, then 
