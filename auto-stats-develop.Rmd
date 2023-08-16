@@ -74,9 +74,14 @@ data <- sleep
 # TO BE FIXED: data_paired was originally assigned sleep, but it is NOT paired data!
 # data_paired <- read.csv("moonAggression.csv")
 data_paired <- sleep
+
+# EJ Data
+data <- read_csv("AutoStatExample2.csv")
 ```
 
+# TODO 
 The IV is `group`, and the DV is `extra`. 
+
 
 ### Introduction: What are you achieving with this test?
 
