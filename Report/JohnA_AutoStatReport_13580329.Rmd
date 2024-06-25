@@ -1,0 +1,31 @@
+---
+title: "Internship Report"
+author: "Arne John"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+## Title: Automatic Statistic Report for  t-Tests in JASP
+
+### Introduction
+
+Statistical analysis can be a daunting task. With math being the least favorite school subject (EducationQuizzes, 2020), and the reason many US college students do not graduate (https://newsroom.ucla.edu/stories/why-so-many-u-s-students-arent-learning-math, 2018), it stands to reason that mistakes are made in the correct interpretation of results. However, poor understanding of statistical concepts are not limited to people with little interest or experience in mathematics. Many undergraduate and graduate students as well as academic researchers struggle with correct interpretation of Null-Hypothesis Rejection Testing and p-values (Falk & Greenbaum, 1995; Gigerenzer, 2004; Haller & Krauss, 2002; Oakes, 1986). This is troubling, given how many papers still rely on the p-value to report their findings (e.g., see Stephens et al., 2005 for an ongoing debate within ecology). As pointed out by Goodman (2008), the most common misconception about p-values is “If P <.05, the null hypothesis has only a 5% chance of being true.” It stems from a misunderstanding of where the p-value originates from; Since p-values derive from the assumption of the null-hypothesis being true, they cannot also give information about the null-hypothesis being false.
+
+The addition of confidence intervals by the APA in the fifth and sixth edition to improve accessibility of statistics seems to have had only mild results. As studies show, confidence intervals, too, are often misunderstood and wrong conclusions are drawn from them (Hoekstra et al., 2014; Morey et al., 2016). This is because p-values, confidence intervals, and differences in Akaike’s information criterion (AIC) are all linked (Murtaugh, 2014). Changing the value reported will not automatically change people’s understanding of the statistical tool as a whole. 
+
+Assuming researchers do not want to switch to a Bayesian model of statistics, the easiest way to ensure correct interpretation of statistical results is to give a written report stating what one can and cannot conclude. This way, the researcher can build their reporting around correct sentences rather than relying on their memory and inferred understanding.
+
+JASP is an open-source statistical program that combines the benefits of up-to-date developments of statistical methods with the user-friendliness of a program with a GUI. It allows the user to conduct both frequentist and Bayesian statistics. It reduces avenues of failure by easily allowing the user to plot their data and visually discover problems, thereby avoiding misinterpretations by only looking at the descriptive statistics as can be seen in Anscombe's quartet Anscombe, 1973) Sometimes when people report statistics, they do it incompletely. People do not plot their data and are not using safety nets to check whether the analysis fits the data.
+
+This project intends to expand the safety net JASP provides users when interpreting their data. It does this by taking the statistical output from JASP and creating a report about the analysis results in text form. It is intended to have three levels of verbosity. On the simplest level, it just states the results with its assumptions, and a link of the literature. On a medium level, the report also includes a simple summary of the chosen test and its statistical assumptions that the data needs to meet. On the highest level, the text also includes common misconceptions and the actual facts about hypothesis testing and parameter interpretation.
+## An Automatic Report
+
+#### Design
+
+#### Verbosity Levels
+
+#### JASP Integration
+
+### Challenges and Outlook
+
+### References

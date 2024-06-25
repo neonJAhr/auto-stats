@@ -1,6 +1,6 @@
 Interpretation template of your choosing, select from options
 
-What features should such a asystem have? 
+What features should such a system have? 
 
 What would this look like? Proof of concept
 

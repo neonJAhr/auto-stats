@@ -1,0 +1,59 @@
+.ttestHypothesisText <- function(jaspResults, dataset, options, ready, type) {
+    if (!is.null(jaspResults[["hypothesisText"]]))
+        return()
+    if (!options$autoReport)
+        return()
+    optionsList <- .ttestOptionsList(options, type)
+    groups    <- options$group
+    levels <- base::levels(dataset[[ groups ]])
+    # ttest <- jaspResults[["ttest"]] 
+    
+    mtr <- jaspResults[["mainTableResults"]]$object
+    ttest <- jaspResults[["mainTableTtest"]]$object
+    
+    printed_placeholder <- paste(mtr, collapse = " ")
+    printed_table <- paste(optionsList$whichTests)
+    
+    # Order of items: df, p, Location Parameter, Effect Size, CI LocPar Lo, 
+    # CI LocPar Up, CI Eff Lo, CI Eff Up, SE Eff, SE Diff, Statistic, VS-MPR
+    
+    mtr_rounded <- lapply(mtr, round, digits = 3)
+    significant <- ifelse(mtr_rounded["p"] > 0.05, "not", "")
+    
+    hypothesisText <- createJaspHtml(
+        text = gettextf("<h2>5. Hypothesis Testing: Is The Effect Absent?</h2>
+        For the standard t-test, the group difference is %3$s
+        statistically significant at the .05 level: p=%4$s, t(%5$s) = %6$s. 
+        We may %3$s reject the null-hypothesis of no population 
+        difference between the groups. [NB. this needs to be adjusted for a 
+        one-sided test] The Vovk-Sellke maximum p-Ratio of 3.6162 indicates the 
+        maximum possible odds in favor of H1 over H0, which is not compelling and 
+        urges caution. [only include for odds lower than 10]<br>
+        For the Welch test, the group difference is %3$s statistically 
+        significant at the .05 level: p=.0264, t(37.8554) = -2.3109. We may reject 
+        [fork: may not reject] the null-hypothesis of no population difference 
+        between the groups. [NB. this needs to be adjusted for a one-sided test]<br>
+        For the Mann-Whitney test, the group difference is %3$s 
+        statistically significant at the .05 level: p=.0127, rank biserial 
+        correlation = -0.4410. We may reject [fork: may not reject] the 
+        null-hypothesis of no population difference between the groups. 
+        [NB. this needs to be adjusted for a one-sided test]<br>
+        For all tests: the p-value does not quantify evidence for the null 
+        hypothesis versus the alternative hypothesis; the p-value also cannot be 
+        taken to mean that the null hypothesis is either likely or unlikely to 
+        hold, or that the data are more or less likely to occur under the null 
+        hypothesis than under the alternative hypothesis. In order to obtain this 
+        information a Bayesian analysis would be needed. <br> %7$s <br>%8$s <br>%9$s
+        <br>%10$s<br><br>%11$s <br><br> %12$s", 
+                        levels[1], levels[2],
+                        significant,  mtr_rounded["p"], 
+                        mtr_rounded["df"], 
+                        mtr_rounded["t"], 
+                        paste(names(mtr_rounded), collapse = " "), 
+                        paste(mtr_rounded, collapse = " "), 
+                        length(mtr_rounded), paste(optionsList, collapse = ' '), 
+                        "ignore", paste(names(optionsList), collapse = " ")
+        ))
+    
+    jaspResults[["hypothesisText"]] <- hypothesisText
+}
