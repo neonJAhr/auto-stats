@@ -170,34 +170,6 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
   if (ready)
     .ttestIndependentMainFill(jaspResults, ttest, dataset, options, testStat, optionsList)
   
-  ### Auto-Stat Addition Text __________________________________________________
-  alternative <- options$alternative # This works as a variable
-  groups    <- options$group # This seems to refer to the name given the grouping var
-  dependent <- options$dependent
-  levels <- base::levels(dataset[[ groups ]])
-  meanDiff <- options$meanDifference
-  meanDiffCi <- options$meanDifferenceCi
-  summaryText <- createJaspHtml(
-      text = gettextf("<h2>1. Executive Summary of the Default Analysis</h2>
-            The t-test table above summarizes the outcome of the default statistical test. 
-            The difference in the two sample means is %1$s, with a standard error of %2$s. 
-            The corresponding value for %3$s equals -0.6841, with a standard error 
-            of 0.3182 and a 95%% confidence interval ranging from -1.2895 to -0.0710. 
-            This difference is [fork: is not] statistically significant at the .05 level:
-            p=.0286, t(42) = -2.2666. We may reject [fork: may not reject] the null-hypothesis 
-            of no population difference between the groups. [NB. this needs to be adjusted for 
-            a one-sided test] Note that this does not mean that the data provide evidence 
-            against [fork: for] the null hypothesis or provide evidence for [fork: against] 
-            the alternative hypothesis; it also does not mean that the null hypothesis is 
-            unlikely [fork: likely] to hold. These results also do not identify a likely 
-            range of values for effect size. In order to address these questions a Bayesian 
-            analysis would be needed. The Vovk-Sellke maximum p-Ratio of 3.6162 indicates 
-            the maximum possible odds in favor of H1 over H0, which is not compelling and 
-            urges caution. [only include for odds lower than 10] [Note to Arne: these last 
-            sentences would clearly be part of a verbose report] [Note to Arne: we could 
-            also include a mention of whether the assumptions appear violated, and what 
-            a nonparametric test shows]", meanDiff, meanDiffCi, nameOfEffectSizeParametric
-            ))
   mainTableTtest$object <- ttest
 }
 
@@ -297,7 +269,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
               
               if (!isTryError(result)) {
                   row <- c(row, result[["row"]])
-                  mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]))
+                  # mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]))
                   
                   if (result[["leveneViolated"]] && options$equalityOfVariancesTestType == "brownForsythe")
                       table$addFootnote(gettext("Brown-Forsythe test is significant (p < .05), suggesting a violation of the equal variance assumption"), colNames = "p", rowNames = rowName)
@@ -316,6 +288,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
               table$addFootnote(errorMessage, colNames = testStat, rowNames = rowName)
           }
           table$addRows(row, rowNames = rowName)
+          mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]))
       }
       
       if (effSize == "glass") {
@@ -788,8 +761,11 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$autoReport)
         return()
+    # if (!is.null(jaspResults[["mainTableResults"]]))
+    #     return()
+    # optionsList <- .ttestOptionsList(options, type)
+    
     # Defining variables for text output
-    optionsList <- .ttestOptionsList(options, type)
     alternative <- options$alternative # This works as a variable
     groups    <- options$group # This seems to refer to the name given the grouping var
     dependent <- options$dependent
@@ -814,13 +790,13 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     
     # Create text
     introText <- createJaspHtml(text =
-                                    gettextf("This is an autostat report for an independent samples t-test.
+                 gettextf("This is an autostat report for an independent samples t-test.
                  Interest centers on the comparison of two groups (i.e., group =
                  <b>%1$s</b> versus group = <b>%2$s</b>) concerning their population
                  means for the dependent variable <b>%3$s</b>. The t-test assumes that
                  the <b>%3$s</b> data from each group are continuous and normally
                  distributed. %4$s",
-                                             levels[1], levels[2], dependent, altHypoText))
+                 levels[1], levels[2], dependent, altHypoText))
     
     jaspResults[["introText"]] <- introText
 }
@@ -830,52 +806,80 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$autoReport)
         return()
-    # Defining variables for text output
     optionsList <- .ttestOptionsList(options, type)
+    
+    # Defining variables for text output
+    
+    mtr <- jaspResults[["mainTableResults"]]$object # get data table
     alternative <- options$alternative # This works as a variable
     groups    <- options$group # This seems to refer to the name given the grouping var
     dependent <- options$dependent
     levels <- base::levels(dataset[[ groups ]])
-    meanDiff <- options$meanDifference
-    meanDiffCi <- options$meanDifferenceCi
-    # Output branch alternative hypothesis
-    if (alternative == "twoSided")
-        altHypoText <- "The report below is for a two-sided test, that is,
-                 the alternative hypothesis does not state the direction of the
-                 effect."
-    else if (alternative == "greater")
-        altHypoText <- gettextf("The report below is testing whether the scores of
-                 <b>%1$s</b> are greater than the scores of <b>%2$s</b>.",
-                                levels[1],
-                                levels[2] )
-    else if (alternative == "less")
-        altHypoText <- gettextf("The report below is testing whether the scores of
-                 <b>%1$s</b> are less than the scores of <b>%2$s</b>.",
-                                levels[1],
-                                levels[2] )
-    else altHypoText <- "No alternative hypothesis has been selected."
+    mtr_rounded <- lapply(mtr, round, digits = 3)
+    significant <- ifelse(mtr_rounded["p"] > 0.05, "not", "")
+    evidence <- c("for", "against")
+    # evidence <- ifelse(mtr_rounded["p"] > 0.05, rev(evidence), evidence)
+    un_likely <- ifelse(mtr_rounded["p"] > 0.05, "likely", "unlikely")
+    test_type <- c("standard t-", "Welch t-", "Mann-Whitney U ")
+    
+    # # Output branch alternative hypothesis
+    # if (alternative == "twoSided")
+    #     altHypoText <- "The report below is for a two-sided test, that is,
+    #              the alternative hypothesis does not state the direction of the
+    #              effect."
+    # else if (alternative == "greater")
+    #     altHypoText <- gettextf("The report below is testing whether the scores of
+    #              <b>%1$s</b> are greater than the scores of <b>%2$s</b>.",
+    #                             levels[1],
+    #                             levels[2] )
+    # else if (alternative == "less")
+    #     altHypoText <- gettextf("The report below is testing whether the scores of
+    #              <b>%1$s</b> are less than the scores of <b>%2$s</b>.",
+    #                             levels[1],
+    #                             levels[2] )
+    # else altHypoText <- "No alternative hypothesis has been selected."
     
     # Create text
-    summaryText <- createJaspHtml(
+    summaryTitle <- createJaspHtml(
         text = gettextf("<h2>1. Executive Summary of the Default Analysis</h2>
-            The t-test table above summarizes the outcome of the default statistical test. 
-            The difference in the two sample means is %1$f, with a standard error of %2$f. 
-            The corresponding value for Cohen's d equals -0.6841, with a standard error 
-            of 0.3182 and a 95%% confidence interval ranging from -1.2895 to -0.0710. 
-            This difference is [fork: is not] statistically significant at the .05 level:
-            p=.0286, t(42) = -2.2666. We may reject [fork: may not reject] the null-hypothesis 
+                        The t-test table above summarizes the outcome of the %1$stest."
+                        , test_type[1]))
+        
+    jaspResults[["summaryTitle"]] <- summaryTitle
+    
+    # Create text
+    
+    # Difference Text
+    if (optionsList$wantsDifference) {
+        summaryDif <- createJaspHtml(
+            text = gettextf("The difference in the two sample means is NUMBER_ONE, 
+            with a standard error of NUMBER_TWO. The corresponding value for Cohen's d 
+            equals -0.6841, with a standard error of 0.3182 and a 95%% confidence 
+            interval ranging from -1.2895 to -0.0710."))
+        jaspResults[["summaryDif"]] <- summaryDif
+    }
+    
+    
+    # Commenting out in favor of inserting into conditional
+    # jaspResults[["summaryDif"]] <- summaryDif
+    
+    summaryText <- createJaspHtml(
+        text = gettextf("
+            This difference is %1$s statistically significant at the .05 level:
+            p=.0286, t(42) = -2.2666. We may %1$s reject the null-hypothesis 
             of no population difference between the groups. [NB. this needs to be adjusted for 
             a one-sided test] Note that this does not mean that the data provide evidence 
-            against [fork: for] the null hypothesis or provide evidence for [fork: against] 
-            the alternative hypothesis; it also does not mean that the null hypothesis is 
-            unlikely [fork: likely] to hold. These results also do not identify a likely 
+            %2$s the null hypothesis or provide evidence %3$s the alternative 
+            hypothesis; it also does not mean that the null hypothesis is 
+            %4$s to hold. These results also do not identify a likely 
             range of values for effect size. In order to address these questions a Bayesian 
             analysis would be needed. The Vovk-Sellke maximum p-Ratio of 3.6162 indicates 
             the maximum possible odds in favor of H1 over H0, which is not compelling and 
             urges caution. [only include for odds lower than 10] [Note to Arne: these last 
             sentences would clearly be part of a verbose report] [Note to Arne: we could 
             also include a mention of whether the assumptions appear violated, and what 
-            a nonparametric test shows]", meanDiff, meanDiffCi))
+            a nonparametric test shows]", significant,
+                        evidence[1], evidence[2], un_likely))
     
     jaspResults[["summaryText"]] <- summaryText
 }
@@ -885,6 +889,8 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$autoReport)
         return()
+    optionsList <- .ttestOptionsList(options, type)
+    
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
     dependent <- options$dependent
@@ -921,6 +927,8 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$autoReport || !options$textAssumptions)
         return()
+    optionsList <- .ttestOptionsList(options, type)
+    
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
     assumptionsText <- createJaspHtml(
@@ -961,6 +969,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$autoReport)
         return()
+    
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
     parametersText <- createJaspHtml(
@@ -1005,12 +1014,15 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$autoReport)
         return()
+    if (!is.null(jaspResults[["mainTableResults"]]))
+        return()
     optionsList <- .ttestOptionsList(options, type)
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
     
     mtr <- jaspResults[["mainTableResults"]]$object
-    ttest <- jaspResults[["mainTableTtest"]]$object
+    # INSERT Commenting out ttest to see if it can be done without
+    # ttest <- jaspResults[["mainTableTtest"]]$object
     
     # Order of items: df, p, Location Parameter, Effect Size, CI LocPar Lo, 
     # CI LocPar Up, CI Eff Lo, CI Eff Up, SE Eff, SE Diff, Statistic, VS-MPR
