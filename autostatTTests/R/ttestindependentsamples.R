@@ -1062,7 +1062,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     # CI LocPar Up, CI Eff Lo, CI Eff Up, SE Eff, SE Diff, Statistic, VS-MPR
     # mtr["d"] <- NULL
     # mtr_rounded <- lapply(mtr, round, digits = 3)
-    # significant <- ifelse(mtr_rounded["p"] > 0.05, "not", "")
+    significant <- ifelse(mtr["p"] > 0.05, "not", "")
 
     test_type <- c("standard t-", "Welch t-", "Mann-Whitney U")
     hypothesisTitle <- createJaspHtml(
