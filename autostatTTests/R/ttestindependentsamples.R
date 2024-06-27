@@ -350,7 +350,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     if (test == "Welch")  # Use different SE when using Welch T test!
       sdPooled <- sqrt(((sds[1]^2) + (sds[2]^2)) / 2)
 
-    d <- "."
+    d <- NA # Changed from ".", as that broke lapply functions.
     if (optionsList$wantsEffect) {
       # Sources are https://en.wikipedia.org/wiki/Effect_size for now.
       if (options$effectSizeType == "cohen")
@@ -799,8 +799,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     jaspResults[["introText"]] <- introText
 }
 
-# ToDo: UNCOMMENT THE REST AFTER FIGURING OUT MainTableData
-# 
+
 .ttestIndependentSummaryText <- function(jaspResults, dataset, options, ready, type) {
     # if (!is.null(jaspResults[["summaryText"]]))
     #     return()
@@ -814,8 +813,6 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 
     # Defining variables for text output
     mtr <- jaspResults[["mainTableResults"]]$object # get data table
-    # mtr["d"] <- NULL
-    # mtr["effectSizeSe"] <- NULL
     alternative <- options$alternative # This works as a variable
     groups    <- options$group # This seems to refer to the name given the grouping var
     dependent <- options$dependent
@@ -830,7 +827,15 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     significant <- ifelse(mtr["p"] > 0.05, "not", "")
     evidence <- c("for", "against")
     un_likely <- ifelse(mtr["p"] > 0.05, "likely", "unlikely")
-
+    
+    # EffectSize Type (adapted from .ttestIndependentMainTable)
+    if (options$effectSizeType == "cohen")
+        effSizeName <- "Cohen's d"
+    else if (options$effectSizeType == "glass")
+        effSizeName <- "Glass' delta"
+    else if (options$effectSizeType == "hedges")
+        effSizeName <- "Hedges' g"
+    
     test_type <- c("standard t-", "Welch t-", "Mann-Whitney U ")
 
     # Summary Title
@@ -848,7 +853,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     if (options$effectSize) {
         summaryEffect <- stringr::str_glue(
         "The difference in the two sample means is {mtr_rounded['md']}, with a standard
-        error of {mtr_rounded['sed']}. The corresponding value for Cohen's d equals {mtr_rounded['d']},
+        error of {mtr_rounded['sed']}. The corresponding value for {effSizeName} equals {mtr_rounded['d']},
         with a standard error of {mtr_rounded['effectSizeSe']} {summ_effectCi}.")
     } else (summaryEffect <- "")
 
@@ -1007,13 +1012,22 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
+    
+    # EffectSize Type (adapted from .ttestIndependentMainTable)
+    if (options$effectSizeType == "cohen")
+        effSizeName <- "Cohen's d"
+    else if (options$effectSizeType == "glass")
+        effSizeName <- "Glass' delta"
+    else if (options$effectSizeType == "hedges")
+        effSizeName <- "Hedges' g"
+    
     parametersText <- createJaspHtml(
         text = gettextf("<h2>4. Parameter Estimation: How Strong is the Effect?</h2>
         As is apparent from the T-test table and the descriptive information,
         the mean drp is observed to be higher for group=<b>%1$s</b> than for
         group=<b>%2$s</b>. The location parameter equals the difference in the
         two sample means (i.e., 9.9545), with a standard error of 4.3919.
-        The corresponding value for Cohen's d equals -0.6841, with a standard
+        The corresponding value for {effSizeName} equals -0.6841, with a standard
         error of 0.3182 and a 95%% confidence  interval ranging from -1.2895 to
         -0.0710. According to Cohen's classification scheme, the value of
         -0.6841 corresponds to an observed effect that is 'medium to large'.
@@ -1023,7 +1037,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         report the results from the Welch test, which assumes that the variances in the
         two groups are unequal. The location parameter in the Welch test equals
         the difference in the two sample means and the associated standard error
-        is 4.3076. The corresponding value for Cohen's d equals -0.6908, with a
+        is 4.3076. The corresponding value for {effSizeName} equals -0.6908, with a
         standard error of 0.3185 and a 95%% confidence interval ranging from -1.2981
         to -0.0750. According to Cohen's classification scheme, the value of
         -0.6908 corresponds to an observed effect that is 'medium to large'.<br>
@@ -1061,7 +1075,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     # Order of items: df, p, Location Parameter, Effect Size, CI LocPar Lo,
     # CI LocPar Up, CI Eff Lo, CI Eff Up, SE Eff, SE Diff, Statistic, VS-MPR
     # mtr["d"] <- NULL
-    # mtr_rounded <- lapply(mtr, round, digits = 3)
+    mtr_rounded <- lapply(mtr, round, digits = 3)
     significant <- ifelse(mtr["p"] > 0.05, "not", "")
 
     test_type <- c("standard t-", "Welch t-", "Mann-Whitney U")
