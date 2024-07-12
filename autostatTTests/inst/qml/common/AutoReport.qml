@@ -41,10 +41,10 @@ Section
 		{
 			title: qsTr("Assumption Checks")
 			visible: checkAssumptions.checked
-			CheckBox { name: "text_normalityTest";	label: qsTr("Normality") }
+			CheckBox { name: "textNormalityTest";	label: qsTr("Normality") }
 			CheckBox
 			{
-				name: "text_equalityOfVariancesTest";	label: qsTr("Equality of variances"); 
+				name: "textEqualityOfVariancesTest";	label: qsTr("Equality of variances"); 
 				RadioButtonGroup
 				{
 					name: "textEqualityOfVariancesTestType"

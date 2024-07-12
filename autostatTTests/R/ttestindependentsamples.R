@@ -174,6 +174,11 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
 }
 
 .ttestIndependentNormalTable <- function(jaspResults, dataset, options, ready, type) {
+    
+  # Arne Addition Save Table as State
+  normalTableTtest <- createJaspState()
+  jaspResults[["normalTableTtest"]] <- normalTableTtest
+    
   # Container
   .ttestAssumptionCheckContainer(jaspResults, options, type)
   container <- jaspResults[["AssumptionChecks"]]
@@ -895,22 +900,20 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 
     jaspResults[["summaryText"]] <- summaryText
     
-    # 
-    # # Placeholder text TO BE REMOVED
-    # # mtr1 <- mtr
-    # # mtr_r <- lapply(mtr1, round, digits = 3)
-    # # element_info <- mtr1[["df"]]
-    # summaryTest <- createJaspHtml(
-    #     text = gettextf("<h2>Placeholder to print variables</h2>
-    #                     %1$s <p> %2$s <p>---<p> %3$s <p> %4$s", 
-    #                     paste(names(options), collapse = "; "), 
-    #                     paste(options, collapse = "; "),
-    #                     paste(names(mtr), collapse = " "),
-    #                     # paste(mtr, collapse = " ")
-    #                     typeof(mtr)# , length(mtr_r)
-    #     ))
-    # 
-    # jaspResults[["summaryTest"]] <- summaryTest
+
+    # Placeholder text TO BE REMOVED
+    # mtr1 <- mtr
+    # mtr_r <- lapply(mtr1, round, digits = 3)
+    # element_info <- mtr1[["df"]]
+    summaryTest <- createJaspHtml(
+        text = gettextf("<h2>Placeholder to print variables</h2>
+                        %1$s <p> %2$s <p>---<p> %3$s <p>",
+                        paste(names(options), collapse = "; "),
+                        paste(options, collapse = "; "),
+                        paste(names(mtr), collapse = " ")
+        ))
+
+    jaspResults[["summaryTest"]] <- summaryTest
 }
 
 .ttestDescriptivesText <- function(jaspResults, dataset, options, ready, type) {
@@ -963,31 +966,64 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 }
 
 .ttestAssumptionsText <- function(jaspResults, dataset, options, ready, type) {
-    if (!is.null(jaspResults[["assumptionsText"]]))
-        return()
+    # if (!is.null(jaspResults[["assumptionsText"]]))
+    #     return()
     if (!options$autoReport || !options$textAssumptions)
         return()
     optionsList <- .ttestOptionsList(options, type)
 
+    mtr <- jaspResults[["mainTableResults"]]$object
+    significant <- ifelse(mtr["p"] > 0.05, "not", "")
+    
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
+    
+    if (options$textNormalityTest)
+        normalityText <-
+        gettextf("For group = <b>%1$s</b>, the Shapiro-Wilk test for normality is not [fork: omit the 'not']
+        statistically significant at the .05 level (i.e., p = .6517),
+        and hence we can retain [fork: reject] the hypothesis that the data
+        for group = <b>%1$s</b> are normally dsitributed. For group = <b>%2$s</b>,
+        the Shapiro-Wilk test for normality is not [fork: omit the 'not']
+        statistically significant at the .05 level (i.e., p = .7322), and
+        hence we can retain [fork: reject] the hypothesis that the data for
+        group = <b>%2$s</b> are normally dsitributed. [Note to Arne: in high-verbose
+        level, we ought to add the reference to Shapiro-Wilk] Note that when the
+        Shapiro-Wilk test is statistically nonsignificant this does not mean that
+        the assumption of normality is met, or that the data support that
+        assertion. Likewise, when the Shapiro-Wilk test is statistically
+        significant this does not mean that the data provide evidence for
+        the assertion that the data are not normally distributed. In order
+        to address these questions a Bayesian analysis would be needed.<br>", 
+        levels[1], levels[2])
+    else (normalityText <- "")
+    
+    # if (options$textEqualityOfVariancesTest && textEqualityOfVariancesTestType == "brownForsythe")
+    #     equalVarText <- gettextf("The Brown-Forsythe test for equality of variances is not [fork: omit the 'not']
+    #         statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
+    #         Hence we can retain [fork: reject] the null hypothesis that the variances
+    #         in both groups are equal. Note that when the Brown-Forsythe test is
+    #         statistically nonsignificant this does not mean that the assumption
+    #         of equal variance is met, or that the data support that assertion.
+    #         Likewise, when the Brown-Forsythe test is statistically significant
+    #         this does not mean that the data provide evidence for the assertion
+    #         that groups have different variances. In order to address these
+    #         questions a Bayesian analysis would be needed.", )
+    # else if (options$textEqualityOfVariancesTest && textEqualityOfVariancesTestType == "levene")
+    # equalVarText <- gettextf("The Levene's test for equality of variances is not [fork: omit the 'not']
+    #         statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
+    #         Hence we can retain [fork: reject] the null hypothesis that the variances
+    #         in both groups are equal. Note that when Levene's test is
+    #         statistically nonsignificant this does not mean that the assumption
+    #         of equal variance is met, or that the data support that assertion.
+    #         Likewise, when the Levene's test is statistically significant
+    #         this does not mean that the data provide evidence for the assertion
+    #         that groups have different variances. In order to address these
+    #         questions a Bayesian analysis would be needed.")
+
     assumptionsText <- createJaspHtml(
         text = gettextf("<h2>3. Assumption Checks</h2>
-            For group = <b>%1$s</b>, the Shapiro-Wilk test for normality is not [fork: omit the 'not']
-            statistically significant at the .05 level (i.e., p = .6517),
-            and hence we can retain [fork: reject] the hypothesis that the data
-            for group = <b>%1$s</b> are normally dsitributed. For group = <b>%2$s</b>,
-            the Shapiro-Wilk test for normality is not [fork: omit the 'not']
-            statistically significant at the .05 level (i.e., p = .7322), and
-            hence we can retain [fork: reject] the hypothesis that the data for
-            group = <b>%2$s</b> are normally dsitributed. [Note to Arne: in high-verbose
-            level, we ought to add the reference to Shapiro-Wilk] Note that when the
-            Shapiro-Wilk test is statistically nonsignificant this does not mean that
-            the assumption of normality is met, or that the data support that
-            assertion. Likewise, when the Shapiro-Wilk test is statistically
-            significant this does not mean that the data provide evidence for
-            the assertion that the data are not normally distributed. In order
-            to address these questions a Bayesian analysis would be needed.<br>
+            %1$s
             INSERT TABLE IN HERE, LIKELY WITH JASP CONTAINER<br>
             The Brown-Forsythe test for equality of variances is not [fork: omit the 'not']
             statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
@@ -998,8 +1034,8 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
             Likewise, when the Brown-Forsythe test is statistically significant
             this does not mean that the data provide evidence for the assertion
             that groups have different variances. In order to address these
-            questions a Bayesian analysis would be needed.",
-                        levels[1], levels[2]))
+            questions a Bayesian analysis would be needed.", 
+                        normalityText))
 
     jaspResults[["assumptionsText"]] <- assumptionsText
 }
