@@ -825,8 +825,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     #     ifelse(grepl("^[0-9.]+$", x1), round(as.numeric(x1), 3), x1)
     #     })
     significant <- ifelse(mtr["p"] > 0.05, "not", "")
-    evidence_null <- ifelse(mtr["p"] > 0.05, "for", "against")
-    evidence_alt <- ifelse(mtr["p"] > 0.05, "against", "for")
+    evidence <- c("for", "against")
     un_likely <- ifelse(mtr["p"] > 0.05, "likely", "unlikely")
     
     # EffectSize Type (adapted from .ttestIndependentMainTable)
@@ -847,15 +846,15 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     # Effect Size Text
     if (options$effectSizeCi) {
         summ_effectCi <-
-            glue::glue(" and a 95% confidence interval ranging from %1$s to %2$s", 
+            sprintf("and a 95% confidence interval ranging from %1$s to %2$s", 
                     mtr_rounded['lowerCIeffectSize'], {mtr_rounded['upperCIeffectSize']})
         } else (summ_effectCi <- "")
 
     if (options$effectSize) {
-        summaryEffect <- glue::glue(
-        "The difference in the two sample means is {mtr_rounded['md']}, with a standard
-        error of {mtr_rounded['sed']}. The corresponding value for {effSizeName} equals {mtr_rounded['d']},
-        with a standard error of {mtr_rounded['effectSizeSe']}{summ_effectCi}.")
+        summaryEffect <- sprintf(
+        "The difference in the two sample means is %1$s, with a standard error of %2$s. The corresponding value for {effSizeName} equals {mtr_rounded['d']},
+        with a standard error of {mtr_rounded['effectSizeSe']} {summ_effectCi}.",
+        mtr_rounded['md'], mtr_rounded['sed'], )
     } else (summaryEffect <- "")
 
     # Vovk-Sellke selected
@@ -864,7 +863,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                 ", which is substantial [EJ APPROVAL FOR TEXT]"
         else if (mtr_rounded['VovkSellkeMPR'] <= 10) vovkSellkeLevel <-
                 ", which is not compelling and urges caution"
-        summaryVovkSellke <- glue::glue("The Vovk-Sellke maximum p-Ratio
+        summaryVovkSellke <- stringr::str_glue("The Vovk-Sellke maximum p-Ratio
         of {mtr_rounded['VovkSellkeMPR']} indicates the maximum possible odds in favor
         of H1 over H0{vovkSellkeLevel}. [Note to Arne: we could also include
         a mention of whether the assumptions appear violated, and what
@@ -875,42 +874,43 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     if (alternative == "twoSided")
         summNullHypo <- "no population difference between the groups"
     else if (alternative == "greater")
-        summNullHypo <- glue::glue("the {levels[2]} population being equal or greater than the {levels[1]} population
+        summNullHypo <- stringr::str_glue("the {levels[2]} population being equal or greater than the {levels[1]} population
                                           [EJ APPROVAL FOR TEXT]")
     else if (alternative == "less")
-        summNullHypo <- glue::glue("the {levels[2]} population being equal or lesser than the {levels[1]} population
+        summNullHypo <- stringr::str_glue("the {levels[2]} population being equal or lesser than the {levels[1]} population
                                           [EJ APPROVAL FOR TEXT]")
 
     summaryText <- createJaspHtml(
         text = gettextf("The t-test table above summarizes the outcome of the %1$stest.
         %2$s This difference is %3$s statistically significant at the .05 level:
         p=%4$s, t(%5$s) = %6$s. We may %3$s reject the null-hypothesis
-        of %7$s. Note that this does not mean that the data provide evidence %8$s the null hypothesis or provide evidence %9$s the alternative hypothesis; 
-        it also does not mean that the null hypothesis is %10$s to hold. These 
-        results also do not identify a likely range of values for effect size. 
-        In order to address these questions a Bayesian analysis would be needed. %11$s",
+        of %7$s. Note that this does not mean that the data provide evidence
+        %8$s the null hypothesis or provide evidence %9$s the alternative
+        hypothesis; it also does not mean that the null hypothesis is
+        %10$s to hold. These results also do not identify a likely
+        range of values for effect size. In order to address these questions a Bayesian
+        analysis would be needed. %11$s",
         test_type[1], summaryEffect, significant, mtr_rounded["p"], mtr_rounded["df"],
-        mtr_rounded["t"], summNullHypo, evidence_null, evidence_alt, un_likely, 
-        summaryVovkSellke))
+        mtr_rounded["t"], summNullHypo, evidence[1], evidence[2], un_likely, summaryVovkSellke))
 
     jaspResults[["summaryText"]] <- summaryText
     
-    # 
-    # # Placeholder text TO BE REMOVED
-    # # mtr1 <- mtr
-    # # mtr_r <- lapply(mtr1, round, digits = 3)
-    # # element_info <- mtr1[["df"]]
-    # summaryTest <- createJaspHtml(
-    #     text = gettextf("<h2>Placeholder to print variables</h2>
-    #                     %1$s <p> %2$s <p>---<p> %3$s <p> %4$s", 
-    #                     paste(names(options), collapse = "; "), 
-    #                     paste(options, collapse = "; "),
-    #                     paste(names(mtr), collapse = " "),
-    #                     # paste(mtr, collapse = " ")
-    #                     typeof(mtr)# , length(mtr_r)
-    #     ))
-    # 
-    # jaspResults[["summaryTest"]] <- summaryTest
+    
+    # Placeholder text TO BE REMOVED
+    # mtr1 <- mtr
+    # mtr_r <- lapply(mtr1, round, digits = 3)
+    # element_info <- mtr1[["df"]]
+    summaryTest <- createJaspHtml(
+        text = gettextf("<h2>Placeholder to print variables</h2>
+                        %1$s <p> %2$s <p>---<p> %3$s <p> %4$s", 
+                        paste(names(options), collapse = "; "), 
+                        paste(options, collapse = "; "),
+                        paste(names(mtr), collapse = " "),
+                        # paste(mtr, collapse = " ")
+                        typeof(mtr)# , length(mtr_r)
+        ))
+    
+    jaspResults[["summaryTest"]] <- summaryTest
 }
 
 .ttestDescriptivesText <- function(jaspResults, dataset, options, ready, type) {

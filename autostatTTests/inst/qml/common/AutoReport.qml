@@ -41,10 +41,10 @@ Section
 		{
 			title: qsTr("Assumption Checks")
 			visible: checkAssumptions.checked
-			CheckBox { name: "normalityTest";	label: qsTr("Normality"); checked: true }
+			CheckBox { name: "text_normalityTest";	label: qsTr("Normality") }
 			CheckBox
 			{
-				name: "equalityOfVariancesTest";	label: qsTr("Equality of variances"); checked: true 
+				name: "text_equalityOfVariancesTest";	label: qsTr("Equality of variances"); 
 				RadioButtonGroup
 				{
 					name: "textEqualityOfVariancesTestType"
@@ -57,7 +57,7 @@ Section
 		
 	RadioButtonGroup
 	{
-		name: "alternative"
+		name: "text_alternative"
 		title: qsTr("Alternative Hypothesis")
 		RadioButton { value: "twoSided";	label: qsTr("Group 1 ≠ Group 2"); checked: true	}
 		RadioButton { value: "greater";	label: qsTr("Group 1 > Group 2")					}
