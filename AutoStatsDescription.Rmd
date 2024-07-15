@@ -1,0 +1,29 @@
+---
+title: "Auto-Stats Description"
+author: "Arne John"
+date: "2024-07-15"
+output: html_document
+---
+
+
+## AssumptionChecksContainer
+
+
+```{r setup, include=TRUE, run = FALSE}
+  container <- jaspResults[["AssumptionChecks"]] # TO DO: Take notes on worked code, hand in like assignment
+  # Overcome delays by seeing it as 
+```
+
+My idea here is to copy the set-up of mainTableData and "port it over" into a new table for the assumptions. 
+
+Same has to happen for descriptives
+
+Now set up how to port over the variable of significance for the "non" text variable to change. Check if there are other parts, like Levene's being weirdly outside. Give the code to the programmers for review if they need to see it. Then wrap up any last small fixes and send it off for August 1st. 
+
+Put your foot down for the project to be done, even if it doesn't get me the grade I want. I want to take the feedback even if it's meh, as long as it is passing. 
+
+The degree comes over perfectionalism. 
+
+## QML Buttons connect
+
+Look up front-end technique button sync, apply it for QML. It's JavaScript-esque, as far as I understand. Copy steps here for report text. 
