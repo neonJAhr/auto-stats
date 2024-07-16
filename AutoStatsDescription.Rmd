@@ -15,6 +15,7 @@ output: html_document
 ```
 
 My idea here is to copy the set-up of mainTableData and "port it over" into a new table for the assumptions. 
+It again goes into the fill functions, as there the test are ordered as a list 
 
 Same has to happen for descriptives
 

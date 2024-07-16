@@ -50,10 +50,6 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
     return()
 
   optionsList <- .ttestOptionsList(options, type)
-  
-  # Arne Addition Save Table as State
-  mainTableTtest <- createJaspState()
-  jaspResults[["mainTableTtest"]] <- mainTableTtest
 
   # Create table
   ttest <- createJaspTable(title = gettext("Independent Samples T-Test"))
@@ -169,15 +165,9 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
 
   if (ready)
     .ttestIndependentMainFill(jaspResults, ttest, dataset, options, testStat, optionsList)
-  
-  mainTableTtest$object <- ttest
 }
 
 .ttestIndependentNormalTable <- function(jaspResults, dataset, options, ready, type) {
-    
-  # Arne Addition Save Table as State
-  normalTableTtest <- createJaspState()
-  jaspResults[["normalTableTtest"]] <- normalTableTtest
     
   # Container
   .ttestAssumptionCheckContainer(jaspResults, options, type)
@@ -197,8 +187,6 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
 
   message <- gettext("Significant results suggest a deviation from normality.")
   ttestNormalTable$addFootnote(message)
-
-  container[["ttestNormalTable"]] <- ttestNormalTable
 
   if (ready)
     .ttestIndependentNormalFill(ttestNormalTable, dataset, options)
@@ -234,8 +222,6 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
 
   if (ready)
     .ttestIndependentEqVarFill(equalityVariance, dataset, options)
-  
-  AssumptionChecks$object <- jaspResults # TO DO Arne: 
 }
 
 .ttestIndependentMainFill <- function(jaspResults, table, dataset, options, testStat, optionsList) {
@@ -279,7 +265,6 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
               
               if (!isTryError(result)) {
                   row <- c(row, result[["row"]])
-                  # mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]))
                   
                   if (result[["leveneViolated"]] && options$equalityOfVariancesTestType == "brownForsythe")
                       table$addFootnote(gettext("Brown-Forsythe test is significant (p < .05), suggesting a violation of the equal variance assumption"), colNames = "p", rowNames = rowName)
@@ -444,6 +429,11 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 
 ##### Other Tables Fill ----
 .ttestIndependentEqVarFill <- function(table, dataset, options) {
+
+  eqvarTableData <- data.frame()
+  eqvarTableResults <- createJaspState()
+  jaspResults[["eqvarTableResults"]] <- eqvarTableResults
+  
   variables <- options$dependent
   groups    <- options$group
 
@@ -480,7 +470,11 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
       table$addFootnote(gettext("F-statistic could not be calculated"), colNames = "fStat", rowNames = variable)
 
     table$addRows(row, rowNames = variable)
+    
+    # Fill the df with the data generated to capture the tests row-wise per variable
+    eqvarTableData <- rbind(eqvarTableData,do.call(cbind,result[["row"]]))
   }
+  eqvarTableResults$object <- eqvarTableData
 }
 
 .ttestIndependentEqVarRow <- function(table, variable, groups, dataset, options) {
@@ -809,7 +803,6 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     jaspResults[["introText"]] <- introText
 }
 
-
 .ttestIndependentSummaryText <- function(jaspResults, dataset, options, ready, type) {
     # if (!is.null(jaspResults[["summaryText"]]))
     #     return()
@@ -975,10 +968,18 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     #     return()
     if (!options$autoReport || !options$textAssumptions)
         return()
-    optionsList <- .ttestOptionsList(options, type)
-
-    mtr <- jaspResults[["mainTableResults"]]$object
-    significant <- ifelse(mtr["p"] > 0.05, "not", "")
+    if (!options$normalityTest && !options$equalityOfVariancesTest)
+        return()
+    
+    # load the saved jaspState with the eqvar df 
+    eqvar <- jaspResults[["eqvarTableResults"]]$object
+    
+    # copied from above to use as conditional variable
+    nameOfEqVarTest <- switch(options$equalityOfVariancesTestType,
+                              "brownForsythe" = gettext("Brown-Forsythe"),
+                              "levene" = gettext("Levene's"))
+    
+    eqvar_sig <- ifelse(eqvar["p"] > 0.05, "not", "")
     
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
@@ -1002,35 +1003,9 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         to address these questions a Bayesian analysis would be needed.<br>", 
         levels[1], levels[2])
     else (normalityText <- "")
-    
-    # if (options$textEqualityOfVariancesTest && textEqualityOfVariancesTestType == "brownForsythe")
-    #     equalVarText <- gettextf("The Brown-Forsythe test for equality of variances is not [fork: omit the 'not']
-    #         statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
-    #         Hence we can retain [fork: reject] the null hypothesis that the variances
-    #         in both groups are equal. Note that when the Brown-Forsythe test is
-    #         statistically nonsignificant this does not mean that the assumption
-    #         of equal variance is met, or that the data support that assertion.
-    #         Likewise, when the Brown-Forsythe test is statistically significant
-    #         this does not mean that the data provide evidence for the assertion
-    #         that groups have different variances. In order to address these
-    #         questions a Bayesian analysis would be needed.", )
-    # else if (options$textEqualityOfVariancesTest && textEqualityOfVariancesTestType == "levene")
-    # equalVarText <- gettextf("The Levene's test for equality of variances is not [fork: omit the 'not']
-    #         statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
-    #         Hence we can retain [fork: reject] the null hypothesis that the variances
-    #         in both groups are equal. Note that when Levene's test is
-    #         statistically nonsignificant this does not mean that the assumption
-    #         of equal variance is met, or that the data support that assertion.
-    #         Likewise, when the Levene's test is statistically significant
-    #         this does not mean that the data provide evidence for the assertion
-    #         that groups have different variances. In order to address these
-    #         questions a Bayesian analysis would be needed.")
 
-    assumptionsText <- createJaspHtml(
-        text = gettextf("<h2>3. Assumption Checks</h2>
-            %1$s
-            INSERT TABLE IN HERE, LIKELY WITH JASP CONTAINER<br>
-            The Brown-Forsythe test for equality of variances is not [fork: omit the 'not']
+    if (options$equalityOfVariancesTest && (nameOfEqVarTest == "Brown-Forsythe"))
+        equalVarText <- gettextf("The Brown-Forsythe test for equality of variances is %1$s
             statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
             Hence we can retain [fork: reject] the null hypothesis that the variances
             in both groups are equal. Note that when the Brown-Forsythe test is
@@ -1039,8 +1014,27 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
             Likewise, when the Brown-Forsythe test is statistically significant
             this does not mean that the data provide evidence for the assertion
             that groups have different variances. In order to address these
-            questions a Bayesian analysis would be needed.", 
-                        normalityText))
+            questions a Bayesian analysis would be needed.", eqvar_sig)
+    # else (equalVarText <- "") # TODO: Replace this with Levene below
+    else if (options$equalityOfVariancesTest && nameOfEqVarTest == "Levene's")
+    equalVarText <- gettextf("The Levene's test for equality of variances is not [fork: omit the 'not']
+            statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
+            Hence we can retain [fork: reject] the null hypothesis that the variances
+            in both groups are equal. Note that when Levene's test is
+            statistically nonsignificant this does not mean that the assumption
+            of equal variance is met, or that the data support that assertion.
+            Likewise, when the Levene's test is statistically significant
+            this does not mean that the data provide evidence for the assertion
+            that groups have different variances. In order to address these
+            questions a Bayesian analysis would be needed.")
+    else (equalVarText <- "")
+    
+    assumptionsText <- createJaspHtml(
+        text = gettextf("<h2>3. Assumption Checks</h2>
+            %1$s
+            INSERT TABLE IN HERE, LIKELY WITH JASP CONTAINER<br>
+            %2$s", 
+                        normalityText, equalVarText))
 
     jaspResults[["assumptionsText"]] <- assumptionsText
 }
