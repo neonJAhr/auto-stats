@@ -188,6 +188,8 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
   message <- gettext("Significant results suggest a deviation from normality.")
   ttestNormalTable$addFootnote(message)
 
+  container[["ttestNormalTable"]] <- ttestNormalTable
+
   if (ready)
     .ttestIndependentNormalFill(ttestNormalTable, dataset, options)
 }
@@ -231,20 +233,20 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
   jaspResults[["mainTableResults"]] <- mainTableResults
   
   if (options$effectSizeType == "cohen")
-      effSize <- "cohen"
+    effSize <- "cohen"
   else if (options$effectSizeType == "glass")
-      effSize <- "glass"
+    effSize <- "glass"
   else if (options$effectSizeType == "hedges")
-      effSize <- "hedges"
-  
+    effSize <- "hedges"
+
   levels <- levels(dataset[[ options$group ]])
-  
+
   if (options$alternative == "greater" || options$alternative == "less") {
     directionNote <- ifelse(options$alternative == "greater", gettext("greater"), gettext("less"))
     table$addFootnote(gettextf("For all tests, the alternative hypothesis specifies that group %1$s is %2$s than group %3$s.",
                                                 paste("<em>", levels[1], "</em>"), directionNote, paste("<em>", levels[2], "</em>")))
   }
-  
+
   ## for each variable specified, run each test that the user wants
   for (variable in options$dependent) {
       errors <- .hasErrors(dataset,
