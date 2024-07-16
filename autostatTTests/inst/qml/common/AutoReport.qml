@@ -37,22 +37,22 @@ Section
 			id: checkAssumptions
 		}
 		
-		Group
-		{
-			title: qsTr("Assumption Checks")
-			visible: checkAssumptions.checked
-			CheckBox { name: "textNormalityTest";	label: qsTr("Normality") }
-			CheckBox
-			{
-				name: "textEqualityOfVariancesTest";	label: qsTr("Equality of variances"); 
-				RadioButtonGroup
-				{
-					name: "textEqualityOfVariancesTestType"
-					RadioButton { value: "brownForsythe";	label: qsTr("Brown-Forsythe"); checked: true }
-					RadioButton { value: "levene";			label: qsTr("Levene's") }
-				}
-			}
-		}
+// 		Group
+// 		{
+// 			title: qsTr("Assumption Checks")
+// 			visible: checkAssumptions.checked
+// 			CheckBox { name: "textNormalityTest";	label: qsTr("Normality") }
+// 			CheckBox
+// 			{
+// 				name: "textEqualityOfVariancesTest";	label: qsTr("Equality of variances"); 
+// 				RadioButtonGroup
+// 				{
+// 					name: "textEqualityOfVariancesTestType"
+// 					RadioButton { value: "brownForsythe";	label: qsTr("Brown-Forsythe"); checked: true }
+// 					RadioButton { value: "levene";			label: qsTr("Levene's") }
+// 				}
+// 			}
+// 		}
 	}
 		
 	RadioButtonGroup

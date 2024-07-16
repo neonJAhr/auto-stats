@@ -970,71 +970,74 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$normalityTest && !options$equalityOfVariancesTest)
         return()
+    optionsList <- .ttestOptionsList(options, type)
     
     # load the saved jaspState with the eqvar df 
     eqvar <- jaspResults[["eqvarTableResults"]]$object
     
     # copied from above to use as conditional variable
-    nameOfEqVarTest <- switch(options$equalityOfVariancesTestType,
-                              "brownForsythe" = gettext("Brown-Forsythe"),
-                              "levene" = gettext("Levene's"))
-    
-    eqvar_sig <- ifelse(eqvar["p"] > 0.05, "not", "")
+    # nameOfEqVarTest <- switch(options$equalityOfVariancesTestType,
+    #                           "brownForsythe" = gettext("Brown-Forsythe"),
+    #                           "levene" = gettext("Levene's"))
+    # nameOfEqVarTest <- ifelse(options$equalityOfVariancesTestType == "brownForsythe", 
+    #                           "brownForsythe", 
+    #                           "levene")
+    # eqvar_sig <- ifelse(eqvar["p"] > 0.05, "not", "")
+    # levels_eqvar <- levels(dataset[[ groups ]])
     
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
     
-    if (options$textNormalityTest)
-        normalityText <-
-        gettextf("For group = <b>%1$s</b>, the Shapiro-Wilk test for normality is not [fork: omit the 'not']
-        statistically significant at the .05 level (i.e., p = .6517),
-        and hence we can retain [fork: reject] the hypothesis that the data
-        for group = <b>%1$s</b> are normally dsitributed. For group = <b>%2$s</b>,
-        the Shapiro-Wilk test for normality is not [fork: omit the 'not']
-        statistically significant at the .05 level (i.e., p = .7322), and
-        hence we can retain [fork: reject] the hypothesis that the data for
-        group = <b>%2$s</b> are normally dsitributed. [Note to Arne: in high-verbose
-        level, we ought to add the reference to Shapiro-Wilk] Note that when the
-        Shapiro-Wilk test is statistically nonsignificant this does not mean that
-        the assumption of normality is met, or that the data support that
-        assertion. Likewise, when the Shapiro-Wilk test is statistically
-        significant this does not mean that the data provide evidence for
-        the assertion that the data are not normally distributed. In order
-        to address these questions a Bayesian analysis would be needed.<br>", 
-        levels[1], levels[2])
+    if (options$normalityTest)
+        normalityText <- gettextf("For group = <b>%1$s</b>, the Shapiro-Wilk test for normality is not [fork: omit the 'not']
+            statistically significant at the .05 level (i.e., p = .6517),
+            and hence we can retain [fork: reject] the hypothesis that the data
+            for group = <b>%1$s</b> are normally dsitributed. For group = <b>%2$s</b>,
+            the Shapiro-Wilk test for normality is not [fork: omit the 'not']
+            statistically significant at the .05 level (i.e., p = .7322), and
+            hence we can retain [fork: reject] the hypothesis that the data for
+            group = <b>%2$s</b> are normally dsitributed. [Note to Arne: in high-verbose
+            level, we ought to add the reference to Shapiro-Wilk] Note that when the
+            Shapiro-Wilk test is statistically nonsignificant this does not mean that
+            the assumption of normality is met, or that the data support that
+            assertion. Likewise, when the Shapiro-Wilk test is statistically
+            significant this does not mean that the data provide evidence for
+            the assertion that the data are not normally distributed. In order
+            to address these questions a Bayesian analysis would be needed.<br>",
+                                  levels[1], levels[2])
     else (normalityText <- "")
-
-    if (options$equalityOfVariancesTest && (nameOfEqVarTest == "Brown-Forsythe"))
-        equalVarText <- gettextf("The Brown-Forsythe test for equality of variances is %1$s
-            statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
-            Hence we can retain [fork: reject] the null hypothesis that the variances
-            in both groups are equal. Note that when the Brown-Forsythe test is
-            statistically nonsignificant this does not mean that the assumption
-            of equal variance is met, or that the data support that assertion.
-            Likewise, when the Brown-Forsythe test is statistically significant
-            this does not mean that the data provide evidence for the assertion
-            that groups have different variances. In order to address these
-            questions a Bayesian analysis would be needed.", eqvar_sig)
-    # else (equalVarText <- "") # TODO: Replace this with Levene below
-    else if (options$equalityOfVariancesTest && nameOfEqVarTest == "Levene's")
-    equalVarText <- gettextf("The Levene's test for equality of variances is not [fork: omit the 'not']
-            statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
-            Hence we can retain [fork: reject] the null hypothesis that the variances
-            in both groups are equal. Note that when Levene's test is
-            statistically nonsignificant this does not mean that the assumption
-            of equal variance is met, or that the data support that assertion.
-            Likewise, when the Levene's test is statistically significant
-            this does not mean that the data provide evidence for the assertion
-            that groups have different variances. In order to address these
-            questions a Bayesian analysis would be needed.")
-    else (equalVarText <- "")
+    # 
+    # if (options$equalityOfVariancesTest && (nameOfEqVarTest == "brownForsythe"))
+    #     equalVarText <- gettextf("The Brown-Forsythe test for equality of variances is %1$s
+    #         statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
+    #         Hence we can retain [fork: reject] the null hypothesis that the variances
+    #         in both groups are equal. Note that when the Brown-Forsythe test is
+    #         statistically nonsignificant this does not mean that the assumption
+    #         of equal variance is met, or that the data support that assertion.
+    #         Likewise, when the Brown-Forsythe test is statistically significant
+    #         this does not mean that the data provide evidence for the assertion
+    #         that groups have different variances. In order to address these
+    #         questions a Bayesian analysis would be needed.", eqvar_sig)
+    # # else (equalVarText <- "") # TODO: Replace this with Levene below
+    # else if (options$equalityOfVariancesTest && nameOfEqVarTest == "levene")
+    # equalVarText <- gettextf("The Levene's test for equality of variances is not [fork: omit the 'not']
+    #         statistically significant at the .05 level: F(1,42) = 2.3418, p = .1334.
+    #         Hence we can retain [fork: reject] the null hypothesis that the variances
+    #         in both groups are equal. Note that when Levene's test is
+    #         statistically nonsignificant this does not mean that the assumption
+    #         of equal variance is met, or that the data support that assertion.
+    #         Likewise, when the Levene's test is statistically significant
+    #         this does not mean that the data provide evidence for the assertion
+    #         that groups have different variances. In order to address these
+    #         questions a Bayesian analysis would be needed.")
+    # else (equalVarText <- "")
     
     assumptionsText <- createJaspHtml(
         text = gettextf("<h2>3. Assumption Checks</h2>
             %1$s
             INSERT TABLE IN HERE, LIKELY WITH JASP CONTAINER<br>
             %2$s", 
-                        normalityText, equalVarText))
+                        normalityText, "equalVarText")) #TODO Remove ""
 
     jaspResults[["assumptionsText"]] <- assumptionsText
 }

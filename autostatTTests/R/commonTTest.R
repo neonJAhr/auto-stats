@@ -79,8 +79,6 @@ gettextf <- function(fmt, ..., domain = NULL)  {
   optionsList$wantsStudents   <- options$student
   optionsList$wantsDifference <- options$meanDifference
   optionsList$wantsConfidenceMeanDiff <- (options$meanDifferenceCi && options$meanDifference)
-  # optionsList$wantsAutostat <- options$autoReport
-  # optionsList$wantsAssumptions <- options$textAssumptions
 
   if(type == "paired") {
     optionsList$wantsWilcox <- options$wilcoxon
