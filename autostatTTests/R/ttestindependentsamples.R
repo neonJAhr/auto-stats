@@ -197,11 +197,8 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
 .ttestIndependentEqVarTable <- function(jaspResults, dataset, options, ready, type){
   # Container
   .ttestAssumptionCheckContainer(jaspResults, options, type)
-  container <- jaspResults[["AssumptionChecks"]] # TO DO: Take notes on worked code, hand in like assignment
-  # Overcome delays by seeing it as a homework report to be turned in at the end of the week. Can be as plain as is, can be funny. 
-  # Just to report on what I've done and not feel anxious. 
-  # For the code, copy the format from mainTable and fill it in, but with more eloquence, so that by the time the last section comes around, the comments can be minimal
-
+  container <- jaspResults[["AssumptionChecks"]]
+  
   if (!options$equalityOfVariancesTest || !is.null(container[["equalityVariance"]]))
     return()
 
@@ -285,7 +282,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
               table$addFootnote(errorMessage, colNames = testStat, rowNames = rowName)
           }
           table$addRows(row, rowNames = rowName)
-          mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]))
+          mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]), testStat)
       }
       
       if (effSize == "glass") {
@@ -1130,6 +1127,8 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         return()
     if (!options$autoReport)
         return()
+    hypothesisTitle <- createJaspHtml(text = "")
+    hypothesisTitle$dependOn(c("student, welch, mannWhitneyU, group, autoReport"))
 
     optionsList <- .ttestOptionsList(options, type)
     groups    <- options$group
@@ -1142,6 +1141,8 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     # Order of items: df, p, Location Parameter, Effect Size, CI LocPar Lo,
     # CI LocPar Up, CI Eff Lo, CI Eff Up, SE Eff, SE Diff, Statistic, VS-MPR
     # mtr["d"] <- NULL
+    mtr_statnames <- mtr["testStat"]
+    mtr <- subset(mtr, select = -c(testStat) )
     mtr_rounded <- lapply(mtr, round, digits = 3)
     significant <- ifelse(mtr["p"] > 0.05, "not", "")
 
@@ -1212,5 +1213,14 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         information a Bayesian analysis would be needed."))
 
     jaspResults[["hypothesisPval"]] <- hypothesisPval
+    
+    # Placeholder text TO BE REMOVED
+    hypoTest <- createJaspHtml(
+        text = gettextf("<h2>Placeholder to print variables</h2>
+                        %1$s",
+                        paste(mtr_statnames, collapse = " ")
+        ))
+    
+    jaspResults[["hypoTest"]] <- hypoTest
 }
 ##### END AUTO-STAT ____________________________________________________________
