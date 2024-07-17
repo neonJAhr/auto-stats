@@ -197,11 +197,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
 .ttestIndependentEqVarTable <- function(jaspResults, dataset, options, ready, type){
   # Container
   .ttestAssumptionCheckContainer(jaspResults, options, type)
-  container <- jaspResults[["AssumptionChecks"]] # TO DO: Take notes on worked code, hand in like assignment
-  # Overcome delays by seeing it as a homework report to be turned in at the end of the week. Can be as plain as is, can be funny. 
-  # Just to report on what I've done and not feel anxious. 
-  # For the code, copy the format from mainTable and fill it in, but with more eloquence, so that by the time the last section comes around, the comments can be minimal
-
+  container <- jaspResults[["AssumptionChecks"]]
   if (!options$equalityOfVariancesTest || !is.null(container[["equalityVariance"]]))
     return()
 
@@ -915,18 +911,18 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         summaryVovkSellke))
 
     jaspResults[["summaryText"]] <- summaryText
-    
-
-    # Placeholder text TO BE REMOVED
-    summaryTest <- createJaspHtml(
-        text = gettextf("<h2>Placeholder to print variables</h2>
-                        %1$s <p> %2$s <p>---<p> %3$s <p>",
-                        paste(names(options), collapse = "; "),
-                        paste(options, collapse = "; "),
-                        paste(names(mtr), collapse = " ")
-        ))
-
-    jaspResults[["summaryTest"]] <- summaryTest
+    # 
+    # 
+    # # Placeholder text TO BE REMOVED
+    # summaryTest <- createJaspHtml(
+    #     text = gettextf("<h2>Placeholder to print variables</h2>
+    #                     %1$s <p> %2$s <p>---<p> %3$s <p>",
+    #                     paste(names(options), collapse = "; "),
+    #                     paste(options, collapse = "; "),
+    #                     paste(names(mtr), collapse = " ")
+    #     ))
+    # 
+    # jaspResults[["summaryTest"]] <- summaryTest
 }
 
 .ttestDescriptivesText <- function(jaspResults, dataset, options, ready, type) {
@@ -1058,17 +1054,6 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                         normalityText, "equalVarText")) #TODO Remove ""
 
     jaspResults[["assumptionsText"]] <- assumptionsText
-    
-    assumptionsTest <- createJaspHtml(
-        text = gettextf("<h2>Placeholder to print variables</h2>
-                        %1$s <p> %2$s <p>---<p> %3$s <p>",
-                        paste(names(options), collapse = "; "),
-                        paste(options, collapse = "; "),
-                        # paste(names(norm_df), collapse = " ")
-                        typeof(norm_df)
-        ))
-    
-    jaspResults[["assumptionsTest"]] <- assumptionsTest
 }
 
 .ttestParametersText <- function(jaspResults, dataset, options, ready, type) {
