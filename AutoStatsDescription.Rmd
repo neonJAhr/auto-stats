@@ -19,6 +19,8 @@ It again goes into the fill functions, as there the test are ordered as a list
 
 Adding jaspResults into the input for .ttestIndependentEqVarFill to create jaspStates
 
+Tried adapting the list from .ttestIndependentNormalFill into the data frame approach, failed to do so.
+
 
 Same has to happen for descriptives
 

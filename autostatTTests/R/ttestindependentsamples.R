@@ -191,7 +191,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
   container[["ttestNormalTable"]] <- ttestNormalTable
 
   if (ready)
-    .ttestIndependentNormalFill(ttestNormalTable, dataset, options)
+    .ttestIndependentNormalFill(jaspResults, ttestNormalTable, dataset, options)
 }
 
 .ttestIndependentEqVarTable <- function(jaspResults, dataset, options, ready, type){
@@ -223,7 +223,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
   container[["equalityVariance"]] <- equalityVariance
 
   if (ready)
-    .ttestIndependentEqVarFill(equalityVariance, dataset, options)
+    .ttestIndependentEqVarFill(jaspResults, equalityVariance, dataset, options)
 }
 
 .ttestIndependentMainFill <- function(jaspResults, table, dataset, options, testStat, optionsList) {
@@ -430,6 +430,59 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 }
 
 ##### Other Tables Fill ----
+.ttestIndependentNormalFill <- function(jaspResults, table, dataset, options) {
+    ## for a independent t-test, we need to check both group vectors for normality
+    
+    normTableData <- data.frame(dep = character(), 
+                                lev = character(), 
+                                .isNewGroup = logical(), 
+                                W = numeric(), 
+                                p = numeric()
+                                )
+    normTableResults <- createJaspState()
+    jaspResults[["normTableData"]] <- normTableResults
+    # normTableResults$dependOn(c("dependent", "group", "autoReport"))
+    
+    variables <- options$dependent
+    factor    <- options$group
+    levels    <- levels(dataset[[factor]])
+    
+    for (variable in variables) {
+        ## there will be two levels, otherwise .hasErrors will quit
+        for (level in levels) {
+            
+            row     <- list(dep = variable, lev = level, .isNewGroup = (level == levels[1]))
+            rowName <- paste(variable, level, sep = "-")
+            
+            errors <- .hasErrors(dataset,
+                                 message = 'short',
+                                 type = c('observations', 'variance', 'infinity'),
+                                 all.target = variable,
+                                 observations.amount = c('< 3', '> 5000'),
+                                 all.grouping = factor,
+                                 all.groupingLevel = level)
+            
+            if (!identical(errors, FALSE)) {
+                row[["W"]] <- NaN
+                table$addFootnote(errors$message, colNames = "W", rowNames = rowName)
+            } else {
+                ## get the dependent variable at a certain factor level
+                data <- na.omit(dataset[[variable]][dataset[[factor]] == level])
+                r <- stats::shapiro.test(data)
+                row[["W"]] <- as.numeric(r$statistic)
+                row[["p"]] <- r$p.value
+                
+                # this is copying the syntax from mainTableFill to more easily save as a JaspState
+                row_state <- c(row = row, level = level)
+            }
+            normTableData <- rbind.data.frame(normTableData, as.data.frame(row))
+            
+            table$addRows(row, rowNames = rowName)
+        }
+    }
+    normTableResults$object <- normTableData
+}
+
 .ttestIndependentEqVarFill <- function(table, dataset, options) {
 
   eqvarTableData <- data.frame()
@@ -501,52 +554,6 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     LeveneComputed <- FALSE
 
   return(list(row = row, LeveneComputed = LeveneComputed))
-}
-
-.ttestIndependentNormalFill <- function(table, dataset, options) {
-  ## for a independent t-test, we need to check both group vectors for normality
-    
-    normTableData <- data.frame()
-    normTableResults <- createJaspState()
-    jaspResults[["normTableData"]] <- normTableResults
-    
-    
-  variables <- options$dependent
-  factor    <- options$group
-  levels    <- levels(dataset[[factor]])
-
-  for (variable in variables) {
-    ## there will be two levels, otherwise .hasErrors will quit
-    for (level in levels) {
-
-      row     <- list(dep = variable, lev = level, .isNewGroup = (level == levels[1]))
-      rowName <- paste(variable, level, sep = "-")
-
-      errors <- .hasErrors(dataset,
-                           message = 'short',
-                           type = c('observations', 'variance', 'infinity'),
-                           all.target = variable,
-                           observations.amount = c('< 3', '> 5000'),
-                           all.grouping = factor,
-                           all.groupingLevel = level)
-
-      if (!identical(errors, FALSE)) {
-        row[["W"]] <- NaN
-        table$addFootnote(errors$message, colNames = "W", rowNames = rowName)
-      } else {
-        ## get the dependent variable at a certain factor level
-        data <- na.omit(dataset[[variable]][dataset[[factor]] == level])
-        r <- stats::shapiro.test(data)
-        row[["W"]] <- as.numeric(r$statistic)
-        row[["p"]] <- r$p.value
-      }
-
-      table$addRows(row, rowNames = rowName)
-      
-      normTableData <- rbind(normTableData,do.call(cbind,result[["row"]]))
-    }
-  }
-  normTableResults$object <- normTableData
 }
 
 .ttestIndependentDescriptivesTable <- function(jaspResults, dataset, options, ready) {
@@ -982,6 +989,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     
     # load the saved jaspState with the eqvar df 
     # Does not contain anything currently
+    norm_df <- jaspResults[["normTableResults"]]$object
     eqvar <- jaspResults[["eqvarTableResults"]]$object
     
     # copied from above to use as conditional variable
@@ -996,6 +1004,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     
     groups    <- options$group
     levels <- base::levels(dataset[[ groups ]])
+    # norm_sig <- ifelse(norm_df["p"] > 0.05, "not", "")
     
     if (options$normalityTest)
         normalityText <- gettextf("For group = <b>%1$s</b>, the Shapiro-Wilk test for normality is not [fork: omit the 'not']
@@ -1055,7 +1064,8 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                         %1$s <p> %2$s <p>---<p> %3$s <p>",
                         paste(names(options), collapse = "; "),
                         paste(options, collapse = "; "),
-                        paste(names(eqvar), collapse = " ")
+                        # paste(names(norm_df), collapse = " ")
+                        typeof(norm_df)
         ))
     
     jaspResults[["assumptionsTest"]] <- assumptionsTest
