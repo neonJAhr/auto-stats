@@ -505,6 +505,12 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 
 .ttestIndependentNormalFill <- function(table, dataset, options) {
   ## for a independent t-test, we need to check both group vectors for normality
+    
+    normTableData <- data.frame()
+    normTableResults <- createJaspState()
+    jaspResults[["normTableData"]] <- normTableResults
+    
+    
   variables <- options$dependent
   factor    <- options$group
   levels    <- levels(dataset[[factor]])
@@ -536,8 +542,11 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
       }
 
       table$addRows(row, rowNames = rowName)
+      
+      normTableData <- rbind(normTableData,do.call(cbind,result[["row"]]))
     }
   }
+  normTableResults$object <- normTableData
 }
 
 .ttestIndependentDescriptivesTable <- function(jaspResults, dataset, options, ready) {
@@ -902,9 +911,6 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     
 
     # Placeholder text TO BE REMOVED
-    # mtr1 <- mtr
-    # mtr_r <- lapply(mtr1, round, digits = 3)
-    # element_info <- mtr1[["df"]]
     summaryTest <- createJaspHtml(
         text = gettextf("<h2>Placeholder to print variables</h2>
                         %1$s <p> %2$s <p>---<p> %3$s <p>",
@@ -975,6 +981,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     optionsList <- .ttestOptionsList(options, type)
     
     # load the saved jaspState with the eqvar df 
+    # Does not contain anything currently
     eqvar <- jaspResults[["eqvarTableResults"]]$object
     
     # copied from above to use as conditional variable
@@ -1042,6 +1049,16 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                         normalityText, "equalVarText")) #TODO Remove ""
 
     jaspResults[["assumptionsText"]] <- assumptionsText
+    
+    assumptionsTest <- createJaspHtml(
+        text = gettextf("<h2>Placeholder to print variables</h2>
+                        %1$s <p> %2$s <p>---<p> %3$s <p>",
+                        paste(names(options), collapse = "; "),
+                        paste(options, collapse = "; "),
+                        paste(names(eqvar), collapse = " ")
+        ))
+    
+    jaspResults[["assumptionsTest"]] <- assumptionsTest
 }
 
 .ttestParametersText <- function(jaspResults, dataset, options, ready, type) {

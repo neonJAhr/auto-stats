@@ -17,6 +17,9 @@ output: html_document
 My idea here is to copy the set-up of mainTableData and "port it over" into a new table for the assumptions. 
 It again goes into the fill functions, as there the test are ordered as a list 
 
+Adding jaspResults into the input for .ttestIndependentEqVarFill to create jaspStates
+
+
 Same has to happen for descriptives
 
 Now set up how to port over the variable of significance for the "non" text variable to change. Check if there are other parts, like Levene's being weirdly outside. Give the code to the programmers for review if they need to see it. Then wrap up any last small fixes and send it off for August 1st. 
