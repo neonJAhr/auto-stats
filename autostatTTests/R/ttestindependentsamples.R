@@ -282,7 +282,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
               table$addFootnote(errorMessage, colNames = testStat, rowNames = rowName)
           }
           table$addRows(row, rowNames = rowName)
-          mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]), testStat)
+          mainTableData <- rbind(mainTableData,do.call(cbind,result[["row"]]))
       }
       
       if (effSize == "glass") {
@@ -819,59 +819,82 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 }
 
 .ttestIndependentSummaryText <- function(jaspResults, dataset, options, ready, type) {
-    # if (!is.null(jaspResults[["summaryText"]]))
-    #     return()
-    if (!options$autoReport)
-        return()
-    # if (!is.null(jaspResults[["mainTableResults"]]))
-    #     return()
-
-    # TODO Possibly unneeded
-    optionsList <- .ttestOptionsList(options, type)
-
-    # Defining variables for text output
-    mtr <- jaspResults[["mainTableResults"]]$object # get data table
-    alternative <- options$alternative # This works as a variable
-    groups    <- options$group # This seems to refer to the name given the grouping var
-    dependent <- options$dependent
-    levels <- base::levels(dataset[[ groups ]])
-
-    # Rounding MTR
-    mtr_rounded <- lapply(mtr, round, digits = 3)
-    # mtr[] <- lapply(mtr, function(x) {
-    #     x1 <- type.convert(as.character(x), as.is=TRUE)
-    #     ifelse(grepl("^[0-9.]+$", x1), round(as.numeric(x1), 3), x1)
-    #     })
-    significant <- ifelse(mtr["p"] > 0.05, "not", "")
-    evidence_null <- ifelse(mtr["p"] > 0.05, "for", "against")
-    evidence_alt <- ifelse(mtr["p"] > 0.05, "against", "for")
-    un_likely <- ifelse(mtr["p"] > 0.05, "likely", "unlikely")
-    
-    # EffectSize Type (adapted from .ttestIndependentMainTable)
-    if (options$effectSizeType == "cohen")
-        effSizeName <- "Cohen's d"
-    else if (options$effectSizeType == "glass")
-        effSizeName <- "Glass' delta"
-    else if (options$effectSizeType == "hedges")
-        effSizeName <- "Hedges' g"
-    
-    test_type <- c("standard t-", "Welch t-", "Mann-Whitney U ")
-
-    # Summary Title
-    summaryTitle <- createJaspHtml(
-        text = gettextf("<h2>1. Executive Summary of the Default Analysis</h2>"))
-    jaspResults[["summaryTitle"]] <- summaryTitle
-
-    # Effect Size Text
-    if (options$effectSizeCi) {
-        summ_effectCi <-
-            glue::glue(" and a 95% confidence interval ranging from %1$s to %2$s", 
-                    mtr_rounded['lowerCIeffectSize'], {mtr_rounded['upperCIeffectSize']})
-        } else (summ_effectCi <- "")
-
-    if (options$effectSize) {
-        summaryEffect <- glue::glue(
-        "The difference in the two sample means is {mtr_rounded['md']}, with a standard
+  # if (!is.null(jaspResults[["summaryText"]]))
+  #     return()
+  if (!options$autoReport)
+    return()
+  # if (!is.null(jaspResults[["mainTableResults"]]))
+  #     return()
+  
+  # TODO Possibly unneeded
+  optionsList <- .ttestOptionsList(options, type)
+  
+  # Defining variables for text output
+  mtr <- jaspResults[["mainTableResults"]]$object # get data table
+  alternative <- options$alternative # This works as a variable
+  groups    <- options$group # This seems to refer to the name given the grouping var
+  dependent <- options$dependent
+  levels <- base::levels(dataset[[ groups ]])
+  
+  # Rounding MTR
+  mtr_rounded <- lapply(mtr, round, digits = 3)
+  # mtr[] <- lapply(mtr, function(x) {
+  #     x1 <- type.convert(as.character(x), as.is=TRUE)
+  #     ifelse(grepl("^[0-9.]+$", x1), round(as.numeric(x1), 3), x1)
+  #     })
+  significant <- ifelse(mtr["p"] > 0.05, "not", "")
+  evidence_null <- ifelse(mtr["p"] > 0.05, "for", "against")
+  evidence_alt <- ifelse(mtr["p"] > 0.05, "against", "for")
+  un_likely <- ifelse(mtr["p"] > 0.05, "likely", "unlikely")
+  
+  # EffectSize Type (adapted from .ttestIndependentMainTable)
+  if (options$effectSizeType == "cohen")
+    effSizeName <- "Cohen's d"
+  else if (options$effectSizeType == "glass")
+    effSizeName <- "Glass' delta"
+  else if (options$effectSizeType == "hedges")
+    effSizeName <- "Hedges' g"
+  
+  
+  # define all possible variables as empty and populate them if requested
+  # SHOW programmers better solution
+  test_name <- c("student", "welch", "mannWhitney")
+  
+  for (name in test_name) {
+    for (table_column in names(mtr)) {
+      var_name <- paste0(name, "_", table_column)
+      assign(var_name, "")
+    }
+  }
+  
+  # Convert the test selection in natural text form 
+  test_type <- c("Student t-test", "Welch t-test", "Mann-Whitney U test")
+  user_selection <- c(options$student, options$welch, options$mannWhitneyU)
+  selected_tests <- test_type[user_selection]
+  if (length(selected_tests) == 1) {
+      tests_string <- selected_tests
+  } else if (length(selected_tests) == 2) {
+      tests_string <- paste(selected_tests, collapse = " and ")
+  } else {
+      tests_string <- paste(paste(selected_tests[-length(selected_tests)], collapse = ", "),
+                            "and", selected_tests[length(selected_tests)])
+  }
+  
+  # Summary Title
+  summaryTitle <- createJaspHtml(
+    text = gettextf("<h2>1. Executive Summary of the Default Analysis</h2>"))
+  jaspResults[["summaryTitle"]] <- summaryTitle
+  
+  # Effect Size Text
+  if (options$effectSizeCi) {
+    summ_effectCi <-
+      glue::glue(" and a 95% confidence interval ranging from %1$s to %2$s", 
+                 mtr_rounded['lowerCIeffectSize'], {mtr_rounded['upperCIeffectSize']})
+  } else (summ_effectCi <- "")
+  
+  if (options$effectSize) {
+    summaryEffect <- glue::glue(
+      "The difference in the two sample means is {mtr_rounded['md']}, with a standard
         error of {mtr_rounded['sed']}. The corresponding value for {effSizeName} equals {mtr_rounded['d']},
         with a standard error of {mtr_rounded['effectSizeSe']}{summ_effectCi}.")
     } else (summaryEffect <- "")
@@ -900,14 +923,14 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                                           [EJ APPROVAL FOR TEXT]")
 
     summaryText <- createJaspHtml(
-        text = gettextf("The t-test table above summarizes the outcome of the %1$stest.
+        text = gettextf("The table above summarizes the outcome of the %1$s.
         %2$s This difference is %3$s statistically significant at the .05 level:
         p=%4$s, t(%5$s) = %6$s. We may %3$s reject the null-hypothesis
         of %7$s. Note that this does not mean that the data provide evidence %8$s the null hypothesis or provide evidence %9$s the alternative hypothesis; 
         it also does not mean that the null hypothesis is %10$s to hold. These 
         results also do not identify a likely range of values for effect size. 
         In order to address these questions a Bayesian analysis would be needed. %11$s",
-        test_type[1], summaryEffect, significant, mtr_rounded["p"], mtr_rounded["df"],
+        tests_string, summaryEffect, significant, mtr_rounded["p"], mtr_rounded["df"],
         mtr_rounded["t"], summNullHypo, evidence_null, evidence_alt, un_likely, 
         summaryVovkSellke))
 
@@ -1123,38 +1146,36 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
 }
 
 .ttestHypothesisText <- function(jaspResults, dataset, options, ready, type) {
-    if (!is.null(jaspResults[["hypothesisText"]]))
-        return()
-    if (!options$autoReport)
-        return()
-    hypothesisTitle <- createJaspHtml(text = "")
-    hypothesisTitle$dependOn(c("student, welch, mannWhitneyU, group, autoReport"))
-
-    optionsList <- .ttestOptionsList(options, type)
-    groups    <- options$group
-    levels <- base::levels(dataset[[ groups ]])
-
-    mtr <- jaspResults[["mainTableResults"]]$object
-    # INSERT Commenting out ttest to see if it can be done without
-    # ttest <- jaspResults[["mainTableTtest"]]$object
-
-    # Order of items: df, p, Location Parameter, Effect Size, CI LocPar Lo,
-    # CI LocPar Up, CI Eff Lo, CI Eff Up, SE Eff, SE Diff, Statistic, VS-MPR
-    # mtr["d"] <- NULL
-    mtr_statnames <- mtr["testStat"]
-    mtr <- subset(mtr, select = -c(testStat) )
-    mtr_rounded <- lapply(mtr, round, digits = 3)
-    significant <- ifelse(mtr["p"] > 0.05, "not", "")
-
-    test_type <- c("standard t-", "Welch t-", "Mann-Whitney U")
-    hypothesisTitle <- createJaspHtml(
-        text = gettextf("<h2>5. Hypothesis Testing: Is The Effect Absent?</h2>"))
-
-    jaspResults[["hypothesisTitle"]] <- hypothesisTitle
-
-    if (optionsList$wantsStudents) {
-        hypothesisStudent <- createJaspHtml(
-            text = gettextf("
+  if (!is.null(jaspResults[["hypothesisText"]]))
+    return()
+  if (!options$autoReport)
+    return()
+  # hypothesisTitle <- createJaspHtml("")
+  # hypothesisTitle$dependOn("student", "welch", "mannWhitneyU", "group", "dependent", "autoReport")
+  
+  optionsList <- .ttestOptionsList(options, type)
+  groups    <- options$group
+  levels <- base::levels(dataset[[ groups ]])
+  
+  mtr <- jaspResults[["mainTableResults"]]$object
+  # INSERT Commenting out ttest to see if it can be done without
+  # ttest <- jaspResults[["mainTableTtest"]]$object
+  
+  # Order of items: df, p, Location Parameter, Effect Size, CI LocPar Lo,
+  # CI LocPar Up, CI Eff Lo, CI Eff Up, SE Eff, SE Diff, Statistic, VS-MPR
+  # mtr["d"] <- NULL
+  mtr_rounded <- lapply(mtr, round, digits = 3)
+  significant <- ifelse(mtr["p"] > 0.05, "not", "")
+  
+  test_type <- c("standard t-", "Welch t-", "Mann-Whitney U")
+  hypothesisTitle <- createJaspHtml(
+    text = gettextf("<h2>5. Hypothesis Testing: Is The Effect Absent?</h2>"))
+  
+  jaspResults[["hypothesisTitle"]] <- hypothesisTitle
+  
+  if (optionsList$wantsStudents) {
+    hypothesisStudent <- createJaspHtml(
+      text = gettextf("
         For the %7$stest, the group difference is %3$s
         statistically significant at the .05 level: p=%4$s, t(%5$s) = %6$s.
         We may %3$s reject the null-hypothesis of no population
@@ -1213,14 +1234,5 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
         information a Bayesian analysis would be needed."))
 
     jaspResults[["hypothesisPval"]] <- hypothesisPval
-    
-    # Placeholder text TO BE REMOVED
-    hypoTest <- createJaspHtml(
-        text = gettextf("<h2>Placeholder to print variables</h2>
-                        %1$s",
-                        paste(mtr_statnames, collapse = " ")
-        ))
-    
-    jaspResults[["hypoTest"]] <- hypoTest
 }
 ##### END AUTO-STAT ____________________________________________________________
