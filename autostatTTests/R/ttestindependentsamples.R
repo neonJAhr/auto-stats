@@ -442,6 +442,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     normTableResults <- createJaspState()
     jaspResults[["normTableData"]] <- normTableResults
     # normTableResults$dependOn(c("dependent", "group", "roboReport"))
+    # TODO figure out if needed
     
     variables <- options$dependent
     factor    <- options$group
@@ -817,7 +818,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                  the <b>%3$s</b> data from each group are continuous and normally
                  distributed. %4$s",
                  levels[1], levels[2], dependent, altHypoText))
-    
+    introText$dependOn(c("dependent", "group", "alternative"))
     jaspResults[["introText"]] <- introText
 }
 
@@ -856,7 +857,6 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
   
   create_summary_text <- function(mtr, options, dataset, jaspResults) {
       # Helper functions
-      round_mtr <- function(x) apply(x, round, digits = 3)
 
       format_test_result <- function(test_name, test_data, options) {
           effSizeName <- switch(options$effectSizeType,
@@ -934,16 +934,16 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
           significant <- test_data$p < 0.05
           significant_text <- if(significant) "" else "not "
 
-          sprintf("For the %s t-test, the difference between %s is %sstatistically significant at the .05 level: %s
+          sprintf("For the %s test, the difference between %s is %sstatistically significant at the .05 level:
           %s
-      We may %sreject the null-hypothesis of %s.
-      Note that this does not mean that the data provide evidence %s the null hypothesis
-      or provide evidence %s the alternative hypothesis for this test;
-      it also does not mean that the null hypothesis is %s to hold.",
+          We may %sreject the null-hypothesis of %s.
+          Note that this does not mean that the data provide evidence %s the null hypothesis
+          or provide evidence %s the alternative hypothesis for this test;
+          it also does not mean that the null hypothesis is %s to hold.",
                   test,
                   paste(levels, collapse = " and "),
                   significant_text,
-                  format_test_result(test, test_data, options),
+                  # format_test_result(test, test_data, options),
                   summaryEffect,
                   significant_text,
                   summNullHypo,
@@ -983,7 +983,9 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
   summaryText <- createJaspHtml(
       text <- gettextf("%1$s", compiled_text)
   )
-  summaryText$dependOn("student", "welch", "mannWhitneyU", "group", "dependent", "roboReport")
+  summaryText$dependOn(c("student", "welch", "mannWhitneyU", "group", 
+                         "dependent", "roboReport", "vovkSellke",
+                         "effectSize", "effectSizeCI"))
   
   jaspResults[["summaryText"]] <- summaryText
 
@@ -1193,7 +1195,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
   if (!options$roboReport)
     return()
   hypothesisTitle <- createJaspHtml("")
-  hypothesisTitle$dependOn("student", "welch", "mannWhitneyU", "group", "dependent", "roboReport")
+  hypothesisTitle$dependOn(c("student", "welch", "mannWhitneyU", "group", "dependent", "roboReport"))
   
   optionsList <- .ttestOptionsList(options, type)
   groups    <- options$group
