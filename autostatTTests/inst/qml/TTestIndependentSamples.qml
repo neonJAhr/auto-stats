@@ -131,5 +131,5 @@ Form
 		RadioButton { value: "listwise";				label: qsTr("Exclude cases listwise")							}
 	}
 	
-	Common.AutoReport{}
+	Common.RoboReport{}
 }

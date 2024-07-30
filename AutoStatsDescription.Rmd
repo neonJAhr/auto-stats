@@ -21,6 +21,8 @@ Adding jaspResults into the input for .ttestIndependentEqVarFill to create jaspS
 
 Tried adapting the list from .ttestIndependentNormalFill into the data frame approach, failed to do so.
 
+Same has to happen for descriptives
+
 ! Adding in the name of the test in order to refer to the right data in 5. Hypothesis testing
 
  # TO DO: Take notes on worked code, hand in like assignment
@@ -28,14 +30,11 @@ Tried adapting the list from .ttestIndependentNormalFill into the data frame app
   # Just to report on what I've done and not feel anxious. 
   # For the code, copy the format from mainTable and fill it in, but with more eloquence, so that by the time the last section comes around, the comments can be minimal
 
-
-Same has to happen for descriptives
+Note for programmers: A data.table saved as a jaspObject does not retain its rownames
 
 Now set up how to port over the variable of significance for the "non" text variable to change. Check if there are other parts, like Levene's being weirdly outside. Give the code to the programmers for review if they need to see it. Then wrap up any last small fixes and send it off for August 1st. 
 
-Put your foot down for the project to be done, even if it doesn't get me the grade I want. I want to take the feedback even if it's meh, as long as it is passing. 
-
-The degree comes over perfectionalism. 
+You finishing your degree comes over perfectionism. 
 
 ## QML Buttons connect
 

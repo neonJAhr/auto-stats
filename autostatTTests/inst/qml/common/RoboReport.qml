@@ -26,7 +26,7 @@ Section
 	title:		"Automatic Report"
 	info: qsTr("This is currently based on the BarPlots file and the ANOVA Common ")
 
-	CheckBox { name: "autoReport"; 	label: qsTr("Enable Report")}
+	CheckBox { name: "roboReport"; 	label: qsTr("Enable Report")}
 
 	Group
 	{
