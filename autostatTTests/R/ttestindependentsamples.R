@@ -476,7 +476,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                 # this is copying the syntax from mainTableFill to more easily save as a JaspState
                 row_state <- c(row = row, level = level)
             }
-            normTableData <- rbind.data.frame(normTableData, as.data.frame(row))
+            # normTableData <- rbind.data.frame(normTableData, as.data.frame(row))
             
             table$addRows(row, rowNames = rowName)
         }
@@ -528,7 +528,7 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
     table$addRows(row, rowNames = variable)
     
     # Fill the df with the data generated to capture the tests row-wise per variable
-    eqvarTableData <- rbind(eqvarTableData,do.call(cbind,row))
+    # eqvarTableData <- rbind(eqvarTableData,do.call(cbind,row))
   }
   eqvarTableResults$object <- eqvarTableData
 }

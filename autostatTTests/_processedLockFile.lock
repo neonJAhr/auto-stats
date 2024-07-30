@@ -1,0 +1,22 @@
+{
+  "R": {
+    "Version": "4.4.1",
+    "Repositories": [
+      {
+        "Name": "CRAN",
+        "URL": "https://cloud.r-project.org"
+      }
+    ]
+  },
+  "Packages": {
+    "autostatTTests": {
+      "Package": "autostatTTests",
+      "Version": "0.18.2_Local_JASP",
+      "Source": "Local",
+      "RemoteType": "local",
+      "RemoteUrl": "C:/Program Files (x86)/JASP/Modules/auto-stats/autostatTTests",
+      "Cacheable": true,
+      "Hash": "368822e3b0fbee0fbacbecc0ea996353"
+    }
+  }
+}
