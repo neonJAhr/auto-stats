@@ -32,8 +32,6 @@ Same has to happen for descriptives
 
 Note for programmers: A data.table saved as a jaspObject does not retain its rownames
 
-Now set up how to port over the variable of significance for the "non" text variable to change. Check if there are other parts, like Levene's being weirdly outside. Give the code to the programmers for review if they need to see it. Then wrap up any last small fixes and send it off for August 1st. 
-
 You finishing your degree comes over perfectionism. 
 
 ## QML Buttons connect
