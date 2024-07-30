@@ -198,7 +198,7 @@ TTestIndependentSamplesInternal <- function(jaspResults, dataset = NULL, options
   # Container
   .ttestAssumptionCheckContainer(jaspResults, options, type)
   container <- jaspResults[["AssumptionChecks"]]
-  
+
   if (!options$equalityOfVariancesTest || !is.null(container[["equalityVariance"]]))
     return()
 
@@ -1131,7 +1131,6 @@ ttestIndependentMainTableRow <- function(variable, dataset, test, testStat, effS
                         normalityText, equalVarText)) #TODO Remove ""
 
     jaspResults[["assumptionsText"]] <- assumptionsText
-    
 }
 
 .ttestParametersText <- function(jaspResults, dataset, options, ready, type) {
